@@ -116,7 +116,6 @@ export const getLocationGoods = (LocationId, LocationName) => async (
     });
 
     if (getGoodsRes.data) {
-      console.log(getGoodsRes.data);
       // let locationsGoods = [...getState().GoodReducer.locationsGoods];
       // locationsGoods = locationsGoods.map((locGoods) =>
       //   locGoods.LocationId !== LocationId
@@ -140,8 +139,8 @@ export const getLocationGoods = (LocationId, LocationName) => async (
             a.LocationName.toLowerCase() > b.LocationName.toLowerCase()
               ? 1
               : b.LocationName.toLowerCase() > a.LocationName.toLowerCase()
-              ? -1
-              : 0
+                ? -1
+                : 0
           )
         )
       );
@@ -187,7 +186,6 @@ export const deleteGoodAction = (goodToDelete) => async (
   dispatch,
   getState
 ) => {
-  console.log("deleteGoodAction");
 
   dispatch(
     updateLocationAnyStatus(

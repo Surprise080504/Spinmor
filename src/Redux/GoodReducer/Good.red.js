@@ -32,6 +32,7 @@ const initialState = {
     ItemListId: -1, //ItemListId is re named from the returned field 'ItemListid'
     LocationId: null,
     ItemName: null,
+    ItemType: null,
     Description: null,
     Price: null,
     Tax: null,

@@ -9,8 +9,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 
 import { drawerWidth } from "../Assets/consts";
-// import { status } from "../api/api";
-// import { setSelectedLocation } from "../Redux/LocationReducer/Location.act";
 import LocationsTable from "../Components/Location/LocationsTable";
 import LocationForm from "../Components/Location/LocationForm";
 
@@ -53,7 +51,6 @@ const mapStateToProps = ({ AppReducer, LocationReducer }) => ({
   selectedLocation: LocationReducer.selectedLocation,
 });
 const mapDispatchToProps = (dispatch) => ({
-  // setSelectedLocation: bindActionCreators(setSelectedLocation, dispatch),
 });
 
 function Locations({ isMenuOpen, selectedLocation }) {

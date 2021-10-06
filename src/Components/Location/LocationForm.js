@@ -11,17 +11,20 @@ import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-// import FormControlLabel from "@material-ui/core/FormControlLabel";
-// import Checkbox from "@material-ui/core/Checkbox";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
-
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import FormControl from '@material-ui/core/FormControl';
 import { makeStyles } from "@material-ui/core/styles";
-// import clsx from "clsx";
 import UndoIcon from "@material-ui/icons/Undo";
+
+import PaperComponent from "../Custom/PaperComponent";
 
 import {
   setGetLocationDetailsStatus,
@@ -36,6 +39,7 @@ import { drawerWidth } from "../../Assets/consts";
 import { status } from "../../api/api";
 import countries from "../../Assets/countries";
 import currencies from "../../Assets/currencies";
+import location_types from "../../Assets/location_types";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -81,6 +85,12 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     paddingBottom: theme.spacing(2),
   },
+  formControl: {
+    width: 274,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  }
 }));
 
 const mapStateToProps = ({ LocationReducer, AppReducer }) => ({
@@ -177,7 +187,6 @@ function LocationForm({
     const currencyIso =
       selectedLocation?.CurrencySymbol?.trim?.() ||
       countries.find((c) => c.label === businessInfo.country).suggestedCurrency;
-
     setFormState({
       ...selectedLocation,
       Country: countries.find(
@@ -207,11 +216,6 @@ function LocationForm({
     } else {
       newFormState["CurrencySymbol"] = null;
     }
-
-    // Object.keys(newFormState).forEach((key) =>
-    //   newFormState[key] === "" ? null : newFormState[key]
-    // );
-
     const isEqualRes = isEqual(newFormState, {
       ...selectedLocation,
       CurrencySymbol: selectedLocation?.CurrencySymbol?.trim?.(),
@@ -231,7 +235,6 @@ function LocationForm({
 
     const newFormState = { ...formState };
     newFormState[field] = value;
-
     if (field === "Country" && selectedLocation.LocationId === -99) {
       // newFormState["CurrencySymbol"] = value.suggestedCurrency;
       newFormState["CurrencySymbol"] = currencies.find(
@@ -310,6 +313,7 @@ function LocationForm({
       formData["QRCode"] = selectedLocation.QRCode;
       updateLocationAction(formData);
     } else {
+      formData["LocationType"] = formState.LocationType || location_types[0].value;
       createLocationAction(formData);
     }
 
@@ -329,6 +333,7 @@ function LocationForm({
     setSelectedLocation({
       LocationId: -1,
       LocationName: null,
+      LocationType: null,
       StreetAddress1: null,
       StreetAddress2: null,
       Country: null,
@@ -349,12 +354,10 @@ function LocationForm({
       updateLocationStatus === status.finish ||
       createLocationStatus === status.finish
     ) {
-      // setSuccessMessage("Location updated");
-      // setTimeout(() => errorTextRef.current.scrollIntoView(true), 50);
-
       setSelectedLocation({
         LocationId: -1,
         LocationName: null,
+        LocationType: null,
         StreetAddress1: null,
         StreetAddress2: null,
         Country: null,
@@ -391,38 +394,47 @@ function LocationForm({
     setTmpCurrency(null);
   };
 
-  // const [currencyDisabled, setCurrencyDisabled] = React.useState(
-  //   selectedLocation.LocationId !== -99
-  // );
-  // const onCurrencyCheckboxChange = () => {
-  //   if (
-  //     !currencyDisabled &&
-  //     formState.CurrencySymbol.iso !==
-  //       selectedLocation?.CurrencySymbol?.trim?.()
-  //   ) {
-  //     console.log("reset");
+  const [maxWidth, setMaxWidth] = React.useState('sm');
 
-  //     resetTextField(null, "CurrencySymbol");
-  //   }
+  const handleMaxWidthChange = (event) => {
+    setMaxWidth(event.target.value);
+  };
 
-  //   setCurrencyDisabled(!currencyDisabled);
-  // };
-
-  //
-  //
   return (
     <React.Fragment>
       <Dialog
         open={selectedLocation.LocationId !== -1}
         onClose={null}
-        keepMounted={false}
-        maxWidth="sm"
+        maxWidth={maxWidth}
         fullWidth
+        PaperComponent={PaperComponent}
+        aria-labelledby="draggable-dialog-title"
       >
-        <DialogTitle>
-          {selectedLocation.LocationId === -99
-            ? "Create a new location"
-            : `Edit ${selectedLocation.LocationName}`}
+        <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+          <Grid container spacing={3}>
+            <Grid item xs={10}>
+              {selectedLocation.LocationId === -99
+                ? "Create a new location"
+                : `Edit ${selectedLocation.LocationName}`}
+            </Grid>
+            <Grid item xs={2}>
+              <NativeSelect
+                autoFocus
+                value={maxWidth}
+                onChange={handleMaxWidthChange}
+                inputProps={{
+                  name: 'max-width',
+                  id: 'max-width',
+                }}
+                variant="outlined"
+              >
+                <option value="xs">x-small</option>
+                <option value="sm">small</option>
+                <option value="md">middle</option>
+                <option value="lg">large</option>
+              </NativeSelect>
+            </Grid>
+          </Grid>
         </DialogTitle>
 
         <DialogContent>
@@ -472,58 +484,75 @@ function LocationForm({
           {(selectedLocation.LocationId === -99 ||
             (selectedLocation.LocationId !== -99 &&
               getLocationDetailsStatus === status.finish)) && (
-            <form onSubmit={onSubmitForm} id="location-form">
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Location Name"
-                    value={formState.LocationName || ""}
-                    onChange={(e) => onAnyChange(e, "LocationName")}
-                    variant="filled"
-                    required
-                    InputProps={{
-                      endAdornment: selectedLocation.LocationId !== -99 && (
-                        <InputAdornment position="end">
-                          <IconButton
-                            disabled={
-                              formState.LocationName ===
-                              selectedLocation.LocationName
-                            }
-                            onClick={(e) => resetTextField(e, "LocationName")}
-                          >
-                            <UndoIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
+              <form onSubmit={onSubmitForm} id="location-form">
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Location Name"
+                      value={formState.LocationName || ""}
+                      onChange={(e) => onAnyChange(e, "LocationName")}
+                      variant="filled"
+                      required
+                      InputProps={{
+                        endAdornment: selectedLocation.LocationId !== -99 && (
+                          <InputAdornment position="end">
+                            <IconButton
+                              disabled={
+                                formState.LocationName ===
+                                selectedLocation.LocationName
+                              }
+                              onClick={(e) => resetTextField(e, "LocationName")}
+                            >
+                              <UndoIcon />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormControl variant="filled" className={classes.formControl} disabled={formState.LocationId === -99 ? false : true}>
+                      <InputLabel id="demo-simple-select-filled-label">Location Type</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-filled-label"
+                        id="demo-simple-select-filled"
+                        value={formState.LocationType || location_types[0].value}
+                        onChange={(e) => onAnyChange(e, "LocationType")}
+                      >
+                        {location_types.map(item => {
+                          return (
+                            <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>
+                          )
+                        })}
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
-                <Grid item xs={12}>
-                  <TextField
-                    label="Address"
-                    value={formState.StreetAddress1 || ""}
-                    onChange={(e) => onAnyChange(e, "StreetAddress1")}
-                    variant="filled"
-                    InputProps={{
-                      endAdornment: selectedLocation.LocationId !== -99 && (
-                        <InputAdornment position="end">
-                          <IconButton
-                            disabled={
-                              formState.StreetAddress1 ===
-                              selectedLocation.StreetAddress1
-                            }
-                            onClick={(e) => resetTextField(e, "StreetAddress1")}
-                          >
-                            <UndoIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Address"
+                      value={formState.StreetAddress1 || ""}
+                      onChange={(e) => onAnyChange(e, "StreetAddress1")}
+                      variant="filled"
+                      InputProps={{
+                        endAdornment: selectedLocation.LocationId !== -99 && (
+                          <InputAdornment position="end">
+                            <IconButton
+                              disabled={
+                                formState.StreetAddress1 ===
+                                selectedLocation.StreetAddress1
+                              }
+                              onClick={(e) => resetTextField(e, "StreetAddress1")}
+                            >
+                              <UndoIcon />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
 
-                {/*<Grid item xs={12}>
+                  {/*<Grid item xs={12}>
                   <TextField
                     label="Street Address 2"
                     value={formState.StreetAddress2 || ""}
@@ -547,125 +576,125 @@ function LocationForm({
                   />
                 </Grid>*/}
 
-                <Grid item xs={12}>
-                  <TextField
-                    label="Suburb"
-                    value={formState.Suburb || ""}
-                    onChange={(e) => onAnyChange(e, "Suburb")}
-                    variant="filled"
-                    InputProps={{
-                      endAdornment: selectedLocation.LocationId !== -99 && (
-                        <InputAdornment position="end">
-                          <IconButton
-                            disabled={
-                              formState.Suburb === selectedLocation.Suburb
-                            }
-                            onClick={(e) => resetTextField(e, "Suburb")}
-                          >
-                            <UndoIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Suburb"
+                      value={formState.Suburb || ""}
+                      onChange={(e) => onAnyChange(e, "Suburb")}
+                      variant="filled"
+                      InputProps={{
+                        endAdornment: selectedLocation.LocationId !== -99 && (
+                          <InputAdornment position="end">
+                            <IconButton
+                              disabled={
+                                formState.Suburb === selectedLocation.Suburb
+                              }
+                              onClick={(e) => resetTextField(e, "Suburb")}
+                            >
+                              <UndoIcon />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
 
-                <Grid item xs={12}>
-                  <TextField
-                    label="State"
-                    value={formState.State || ""}
-                    onChange={(e) => onAnyChange(e, "State")}
-                    variant="filled"
-                    InputProps={{
-                      endAdornment: selectedLocation.LocationId !== -99 && (
-                        <InputAdornment position="end">
-                          <IconButton
-                            disabled={
-                              formState.State === selectedLocation.State
-                            }
-                            onClick={(e) => resetTextField(e, "State")}
-                          >
-                            <UndoIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      label="State"
+                      value={formState.State || ""}
+                      onChange={(e) => onAnyChange(e, "State")}
+                      variant="filled"
+                      InputProps={{
+                        endAdornment: selectedLocation.LocationId !== -99 && (
+                          <InputAdornment position="end">
+                            <IconButton
+                              disabled={
+                                formState.State === selectedLocation.State
+                              }
+                              onClick={(e) => resetTextField(e, "State")}
+                            >
+                              <UndoIcon />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
 
-                <Grid item xs={12}>
-                  <Autocomplete
-                    style={{ maxWidth: 274 }}
-                    value={formState.Country || countries[0]}
-                    disableClearable
-                    onChange={(e, newValue) => onAnyChange(newValue, "Country")}
-                    id="country-select"
-                    options={countries}
-                    classes={{
-                      option: classes.option,
-                    }}
-                    autoHighlight
-                    getOptionLabel={(option) => option.label}
-                    renderOption={(option) => (
-                      <React.Fragment>{option.label}</React.Fragment>
-                    )}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Country"
-                        variant="filled"
-                        required
-                        inputProps={{
-                          ...params.inputProps,
-                          autoComplete: "new-password", // disable autocomplete and autofill
-                        }}
-                      />
-                    )}
-                  />
-                </Grid>
+                  <Grid item xs={12}>
+                    <Autocomplete
+                      style={{ maxWidth: 274 }}
+                      value={formState.Country || countries[0]}
+                      disableClearable
+                      onChange={(e, newValue) => onAnyChange(newValue, "Country")}
+                      id="country-select"
+                      options={countries}
+                      classes={{
+                        option: classes.option,
+                      }}
+                      autoHighlight
+                      getOptionLabel={(option) => option.label}
+                      renderOption={(option) => (
+                        <React.Fragment>{option.label}</React.Fragment>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Country"
+                          variant="filled"
+                          required
+                          inputProps={{
+                            ...params.inputProps,
+                            autoComplete: "new-password", // disable autocomplete and autofill
+                          }}
+                        />
+                      )}
+                    />
+                  </Grid>
 
-                <Grid item xs={12}>
-                  <Autocomplete
-                    style={{ maxWidth: 274 }}
-                    value={formState.CurrencySymbol || null}
-                    disableClearable
-                    onChange={(e, newValue) =>
-                      // onAnyChange(newValue, "CurrencySymbol")
-                      onCurrencyChange(e, newValue)
-                    }
-                    id="currency-select"
-                    options={currencies}
-                    classes={{
-                      option: classes.option,
-                    }}
-                    autoHighlight
-                    // disabled={currencyDisabled}
-                    getOptionLabel={(option) => option.iso}
-                    renderOption={(option) => <span>{option.iso}</span>}
-                    renderInput={(params) => (
-                      <TextField
-                        // className={clsx(
-                        //   !currencyDisabled && classes.currencyInput
-                        // )}
-                        {...params}
-                        label="Currency"
-                        variant="filled"
-                        required
-                        inputProps={{
-                          ...params.inputProps,
-                          autoComplete: "new-password", // disable autocomplete and autofill
-                        }}
+                  <Grid item xs={12}>
+                    <Autocomplete
+                      style={{ maxWidth: 274 }}
+                      value={formState.CurrencySymbol || null}
+                      disableClearable
+                      onChange={(e, newValue) =>
+                        // onAnyChange(newValue, "CurrencySymbol")
+                        onCurrencyChange(e, newValue)
+                      }
+                      id="currency-select"
+                      options={currencies}
+                      classes={{
+                        option: classes.option,
+                      }}
+                      autoHighlight
+                      // disabled={currencyDisabled}
+                      getOptionLabel={(option) => option.iso}
+                      renderOption={(option) => <span>{option.iso}</span>}
+                      renderInput={(params) => (
+                        <TextField
+                          // className={clsx(
+                          //   !currencyDisabled && classes.currencyInput
+                          // )}
+                          {...params}
+                          label="Currency"
+                          variant="filled"
+                          required
+                          inputProps={{
+                            ...params.inputProps,
+                            autoComplete: "new-password", // disable autocomplete and autofill
+                          }}
                         // helperText={
                         //   selectedLocation.LocationId !== -99
                         //     ? "Changes will not affect items prices!"
                         //     : ""
                         // }
-                      />
-                    )}
-                  />
-                </Grid>
+                        />
+                      )}
+                    />
+                  </Grid>
 
-                {/*selectedLocation.LocationId !== -99 && (
+                  {/*selectedLocation.LocationId !== -99 && (
                   <Grid item xs={12} style={{ marginTop: -26 }}>
                     <FormControlLabel
                       control={
@@ -680,65 +709,65 @@ function LocationForm({
                   </Grid>
                 )*/}
 
-                <Grid item xs={12}>
-                  <TextField
-                    label="Description"
-                    multiline
-                    rows={4}
-                    rowsMax={8}
-                    fullWidth
-                    variant="filled"
-                    placeholder="Goods & Items have a story. Tell your story here"
-                    value={formState.Description || ""}
-                    onChange={(e) => onAnyChange(e, "Description")}
-                    InputProps={{
-                      endAdornment: selectedLocation.LocationId !== -99 && (
-                        <InputAdornment position="end">
-                          <IconButton
-                            disabled={
-                              formState.Description ===
-                              selectedLocation.Description
-                            }
-                            onClick={(e) => resetTextField(e, "Description")}
-                          >
-                            <UndoIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Description"
+                      multiline
+                      rows={4}
+                      rowsMax={8}
+                      fullWidth
+                      variant="filled"
+                      placeholder="Goods & Items have a story. Tell your story here"
+                      value={formState.Description || ""}
+                      onChange={(e) => onAnyChange(e, "Description")}
+                      InputProps={{
+                        endAdornment: selectedLocation.LocationId !== -99 && (
+                          <InputAdornment position="end">
+                            <IconButton
+                              disabled={
+                                formState.Description ===
+                                selectedLocation.Description
+                              }
+                              onClick={(e) => resetTextField(e, "Description")}
+                            >
+                              <UndoIcon />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
 
-                <Grid item xs={12}>
-                  <TextField
-                    label="Thank you message"
-                    multiline
-                    rows={4}
-                    rowsMax={8}
-                    fullWidth
-                    variant="filled"
-                    placeholder="Message to display on mobile phone, after the client pays for the purchased items"
-                    value={formState.ByeBye || ""}
-                    onChange={(e) => onAnyChange(e, "ByeBye")}
-                    InputProps={{
-                      endAdornment: selectedLocation.LocationId !== -99 && (
-                        <InputAdornment position="end">
-                          <IconButton
-                            disabled={
-                              formState.ByeBye === selectedLocation.ByeBye
-                            }
-                            onClick={(e) => resetTextField(e, "ByeBye")}
-                          >
-                            <UndoIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Thank you message"
+                      multiline
+                      rows={4}
+                      rowsMax={8}
+                      fullWidth
+                      variant="filled"
+                      placeholder="Message to display on mobile phone, after the client pays for the purchased items"
+                      value={formState.ByeBye || ""}
+                      onChange={(e) => onAnyChange(e, "ByeBye")}
+                      InputProps={{
+                        endAdornment: selectedLocation.LocationId !== -99 && (
+                          <InputAdornment position="end">
+                            <IconButton
+                              disabled={
+                                formState.ByeBye === selectedLocation.ByeBye
+                              }
+                              onClick={(e) => resetTextField(e, "ByeBye")}
+                            >
+                              <UndoIcon />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-            </form>
-          )}
+              </form>
+            )}
         </DialogContent>
 
         <DialogActions>
@@ -802,7 +831,7 @@ function LocationForm({
           </Button>
         </DialogActions>
       </Dialog>
-    </React.Fragment>
+    </React.Fragment >
   );
 }
 

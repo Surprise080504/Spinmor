@@ -29,6 +29,7 @@ const initialState = {
   selectedLocation: {
     LocationId: -1,
     LocationName: null,
+    LocationType: null,
     StreetAddress1: null,
     StreetAddress2: null,
     Country: null,
@@ -54,8 +55,8 @@ const LocationReducer = (state = initialState, action) => {
           a.LocationName.toLowerCase() > b.LocationName.toLowerCase()
             ? 1
             : b.LocationName.toLowerCase() > a.LocationName.toLowerCase()
-            ? -1
-            : 0
+              ? -1
+              : 0
         ),
       };
     }

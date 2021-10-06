@@ -38,7 +38,6 @@ export const getLocationsAction = (updateStatus = true) => async (
       },
       withCredentials: true,
     });
-
     if (getLocationsRes.data) {
       dispatch(setLocations(getLocationsRes.data));
       if (updateStatus) {
@@ -67,23 +66,6 @@ export const getLocationsAction = (updateStatus = true) => async (
     }
   }
 };
-
-//
-//
-
-// export const setSelectedLocation = (selectedLocation) => async (
-//   dispatch,
-//   getState
-// ) => {
-//   dispatch(setUpdateLocationStatus(status.not_started));
-//   dispatch(setDeleteLocationStatus(status.not_started));
-//   dispatch(setCreateLocationStatus(status.not_started));
-
-//   dispatch({
-//     type: SELECTED_LOCATION,
-//     payload: { ...selectedLocation },
-//   });
-// };
 
 export const setSelectedLocation = (selectedLocation) => ({
   type: SELECTED_LOCATION,
@@ -246,7 +228,6 @@ export const createLocationAction = (formData) => async (
   dispatch,
   getState
 ) => {
-  console.log(formData);
   dispatch(setCreateLocationStatus(status.loading));
 
   try {

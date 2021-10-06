@@ -242,7 +242,7 @@ function AppBarNav({
             src={spinmorLogo}
             alt="logo"
             width={drawerWidth - 80}
-            // height={48}
+          // height={48}
           />
 
           <IconButton onClick={handleDrawerClose}>

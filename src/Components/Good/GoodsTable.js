@@ -343,9 +343,9 @@ function GoodsTable({
               <TableBody>
                 {(rowsPerPage > 0
                   ? allGoods.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
                   : allGoods
                 ).map((good, index) => (
                   <TableRow key={index + " - " + good.QRCode}>

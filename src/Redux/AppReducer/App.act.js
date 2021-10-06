@@ -174,49 +174,49 @@ export const setUpdateProfileStatus = (updateProfileStatus) => ({
 
 export const readProfileAction =
   (updateStatus = true) =>
-  async (dispatch, getState) => {
-    if (updateStatus) {
-      dispatch(setReadProfileStatus(status.loading));
-    }
-
-    try {
-      const readProfileRes = await axiosInstance({
-        method: "get",
-        url: "/host/ReadProfile",
-        headers: {
-          Authorization: "Bearer " + getState().AppReducer.token,
-        },
-        withCredentials: true,
-      });
-
-      if (readProfileRes.data) {
-        dispatch(setUserInfo(readProfileRes.data));
-        if (updateStatus) {
-          dispatch(setReadProfileStatus(status.finish));
-        }
-      } else {
-        if (updateStatus) {
-          dispatch(setReadProfileStatus(`${status.error} 404`));
-        }
-      }
-    } catch (error) {
-      let caughtError = 500;
-
-      if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        caughtError = error.response.status;
-      } else if (error.request) {
-        console.log(error.request);
-      } else {
-        console.log("Error", error.message);
-      }
-
+    async (dispatch, getState) => {
       if (updateStatus) {
-        dispatch(setReadProfileStatus(`${status.error} ${caughtError}`));
+        dispatch(setReadProfileStatus(status.loading));
       }
-    }
-  };
+
+      try {
+        const readProfileRes = await axiosInstance({
+          method: "get",
+          url: "/host/ReadProfile",
+          headers: {
+            Authorization: "Bearer " + getState().AppReducer.token,
+          },
+          withCredentials: true,
+        });
+
+        if (readProfileRes.data) {
+          dispatch(setUserInfo(readProfileRes.data));
+          if (updateStatus) {
+            dispatch(setReadProfileStatus(status.finish));
+          }
+        } else {
+          if (updateStatus) {
+            dispatch(setReadProfileStatus(`${status.error} 404`));
+          }
+        }
+      } catch (error) {
+        let caughtError = 500;
+
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          caughtError = error.response.status;
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
+
+        if (updateStatus) {
+          dispatch(setReadProfileStatus(`${status.error} ${caughtError}`));
+        }
+      }
+    };
 
 export const updateProfileAction = (formData) => async (dispatch, getState) => {
   dispatch(setUpdateProfileStatus(status.loading));
@@ -271,49 +271,49 @@ export const setUpdateBusinessStatus = (updateBusinessStatus) => ({
 
 export const readBusinessAction =
   (updateStatus = true) =>
-  async (dispatch, getState) => {
-    if (updateStatus) {
-      dispatch(setReadBusinessStatus(status.loading));
-    }
-
-    try {
-      const readBusinessRes = await axiosInstance({
-        method: "get",
-        url: "/host/ReadBusinessProfile",
-        headers: {
-          Authorization: "Bearer " + getState().AppReducer.token,
-        },
-        withCredentials: true,
-      });
-
-      if (readBusinessRes.data) {
-        dispatch(setBusinessInfo(readBusinessRes.data));
-        if (updateStatus) {
-          dispatch(setReadBusinessStatus(status.finish));
-        }
-      } else {
-        if (updateStatus) {
-          dispatch(setReadBusinessStatus(`${status.error} 404`));
-        }
-      }
-    } catch (error) {
-      let caughtError = 500;
-
-      if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        caughtError = error.response.status;
-      } else if (error.request) {
-        console.log(error.request);
-      } else {
-        console.log("Error", error.message);
-      }
-
+    async (dispatch, getState) => {
       if (updateStatus) {
-        dispatch(setReadBusinessStatus(`${status.error} ${caughtError}`));
+        dispatch(setReadBusinessStatus(status.loading));
       }
-    }
-  };
+
+      try {
+        const readBusinessRes = await axiosInstance({
+          method: "get",
+          url: "/host/ReadBusinessProfile",
+          headers: {
+            Authorization: "Bearer " + getState().AppReducer.token,
+          },
+          withCredentials: true,
+        });
+
+        if (readBusinessRes.data) {
+          dispatch(setBusinessInfo(readBusinessRes.data));
+          if (updateStatus) {
+            dispatch(setReadBusinessStatus(status.finish));
+          }
+        } else {
+          if (updateStatus) {
+            dispatch(setReadBusinessStatus(`${status.error} 404`));
+          }
+        }
+      } catch (error) {
+        let caughtError = 500;
+
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          caughtError = error.response.status;
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
+
+        if (updateStatus) {
+          dispatch(setReadBusinessStatus(`${status.error} ${caughtError}`));
+        }
+      }
+    };
 
 export const updateBusinessAction =
   (formData) => async (dispatch, getState) => {
@@ -473,62 +473,61 @@ export const setHomePage = (homePage) => ({
 
 export const getHomePageAction =
   (options = {}) =>
-  async (dispatch, getState) => {
-    const { updateStatus = true } = options;
+    async (dispatch, getState) => {
+      const { updateStatus = true } = options;
 
-    if (updateStatus) {
-      dispatch(setHomePageStatus(status.loading));
-    }
+      if (updateStatus) {
+        dispatch(setHomePageStatus(status.loading));
+      }
 
-    const errorHomePage = {
-      Location: null,
-      Date: null,
-      Stage: -2, //stage -2 will fall to unknown step
-      Count: -1,
-      ItemsList: null,
-      Link2PrintList: null,
-    };
+      const errorHomePage = {
+        Location: null,
+        Date: null,
+        Stage: -2, //stage -2 will fall to unknown step
+        Count: -1,
+        ItemsList: null,
+        Link2PrintList: null,
+      };
 
-    try {
-      const homePageRes = await axiosInstance({
-        method: "get",
-        url: "/api/HomePage",
-        headers: {
-          Authorization: "Bearer " + getState().AppReducer.token,
-        },
-        withCredentials: true,
-      });
-
-      if (homePageRes.data) {
-        dispatch(setHomePage(homePageRes.data));
-        if (updateStatus) {
-          dispatch(setHomePageStatus(status.finish));
+      try {
+        const homePageRes = await axiosInstance({
+          method: "get",
+          url: "/api/HomePage",
+          headers: {
+            Authorization: "Bearer " + getState().AppReducer.token,
+          },
+          withCredentials: true,
+        });
+        if (homePageRes.data) {
+          dispatch(setHomePage(homePageRes.data));
+          if (updateStatus) {
+            dispatch(setHomePageStatus(status.finish));
+          }
+        } else {
+          dispatch(setHomePage(errorHomePage));
+          if (updateStatus) {
+            dispatch(setHomePageStatus(`${status.error} 404`));
+          }
         }
-      } else {
+      } catch (error) {
+        let caughtError = 500;
+
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          caughtError = error.response.status;
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
+
         dispatch(setHomePage(errorHomePage));
         if (updateStatus) {
-          dispatch(setHomePageStatus(`${status.error} 404`));
+          dispatch(setHomePageStatus(`${status.error} ${caughtError}`));
         }
       }
-    } catch (error) {
-      let caughtError = 500;
-
-      if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        caughtError = error.response.status;
-      } else if (error.request) {
-        console.log(error.request);
-      } else {
-        console.log("Error", error.message);
-      }
-
-      dispatch(setHomePage(errorHomePage));
-      if (updateStatus) {
-        dispatch(setHomePageStatus(`${status.error} ${caughtError}`));
-      }
-    }
-  };
+    };
 
 //
 //
@@ -545,58 +544,58 @@ export const setSupportStatus = (supportStatus) => ({
 
 export const supportAction =
   (support, fakeLogin = false) =>
-  async (dispatch, getState) => {
-    dispatch(setSupportStatus(status.loading));
+    async (dispatch, getState) => {
+      dispatch(setSupportStatus(status.loading));
 
-    try {
-      let token = getState().AppReducer.token;
-      if (fakeLogin) {
-        const tokenResponse = await axiosInstance({
+      try {
+        let token = getState().AppReducer.token;
+        if (fakeLogin) {
+          const tokenResponse = await axiosInstance({
+            method: "post",
+            url: "/Token",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            data: querystring.stringify({
+              grant_type: "password",
+              username: "fake@gmail.com",
+              password: "Fake12345!",
+              ipaddress: "",
+            }),
+          });
+          token = tokenResponse.data.access_token;
+        }
+
+        await axiosInstance({
           method: "post",
-          url: "/Token",
+          url: "/host/support",
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: "Bearer " + token,
           },
-          data: querystring.stringify({
-            grant_type: "password",
-            username: "fake@gmail.com",
-            password: "Fake12345!",
-            ipaddress: "",
-          }),
+          withCredentials: true,
+          data: {
+            Support: support,
+          },
         });
-        token = tokenResponse.data.access_token;
+
+        dispatch(setSupportStatus(status.finish));
+      } catch (error) {
+        let caughtError = 500;
+
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          caughtError = error.response.status;
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
+
+        dispatch(setSupportStatus(`${status.error} ${caughtError}`));
+        return;
       }
-
-      await axiosInstance({
-        method: "post",
-        url: "/host/support",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-        withCredentials: true,
-        data: {
-          Support: support,
-        },
-      });
-
-      dispatch(setSupportStatus(status.finish));
-    } catch (error) {
-      let caughtError = 500;
-
-      if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        caughtError = error.response.status;
-      } else if (error.request) {
-        console.log(error.request);
-      } else {
-        console.log("Error", error.message);
-      }
-
-      dispatch(setSupportStatus(`${status.error} ${caughtError}`));
-      return;
-    }
-  };
+    };
 
 //
 //
@@ -613,50 +612,50 @@ export const setGetApplicationStageStatus = (getApplicationStageStatus) => ({
 
 export const getApplicationStageAction =
   (options = {}) =>
-  async (dispatch, getState) => {
-    const { updateStatus = true } = options;
-
-    if (updateStatus) {
-      dispatch(setGetApplicationStageStatus(status.loading));
-    }
-
-    try {
-      const getApplicationStageRes = await axiosInstance({
-        method: "get",
-        url: "/host/ApplicationStageRead",
-        headers: {
-          Authorization: "Bearer " + getState().AppReducer.token,
-        },
-        withCredentials: true,
-      });
-
-      dispatch(
-        setApplicationStage(getApplicationStageRes.data.ApplicationStage)
-      );
-      if (updateStatus) {
-        dispatch(setGetApplicationStageStatus(status.finish));
-      }
-    } catch (error) {
-      let caughtError = 500;
-
-      if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        caughtError = error.response.status;
-      } else if (error.request) {
-        console.log(error.request);
-      } else {
-        console.log("Error", error.message);
-      }
+    async (dispatch, getState) => {
+      const { updateStatus = true } = options;
 
       if (updateStatus) {
+        dispatch(setGetApplicationStageStatus(status.loading));
+      }
+
+      try {
+        const getApplicationStageRes = await axiosInstance({
+          method: "get",
+          url: "/host/ApplicationStageRead",
+          headers: {
+            Authorization: "Bearer " + getState().AppReducer.token,
+          },
+          withCredentials: true,
+        });
+
         dispatch(
-          setGetApplicationStageStatus(`${status.error} ${caughtError}`)
+          setApplicationStage(getApplicationStageRes.data.ApplicationStage)
         );
+        if (updateStatus) {
+          dispatch(setGetApplicationStageStatus(status.finish));
+        }
+      } catch (error) {
+        let caughtError = 500;
+
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          caughtError = error.response.status;
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
+
+        if (updateStatus) {
+          dispatch(
+            setGetApplicationStageStatus(`${status.error} ${caughtError}`)
+          );
+        }
+        return;
       }
-      return;
-    }
-  };
+    };
 
 export const setUpdateApplicationStageStatus = (
   updateApplicationStageStatus

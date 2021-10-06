@@ -16,10 +16,10 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Hidden from "@material-ui/core/Hidden";
-
 import { makeStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
 import UndoIcon from "@material-ui/icons/Undo";
+
+import PaperComponent from "../Custom/PaperComponent";
 
 import {
   setSelectedGood,
@@ -330,8 +330,10 @@ function GoodForm({
       keepMounted={false}
       maxWidth="sm"
       fullWidth
+      PaperComponent={PaperComponent}
+      aria-labelledby="draggable-dialog-title"
     >
-      <DialogTitle>
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {hideLocationsSelection ? (
           <React.Fragment>
             Create a new item at <b>{formState.Location?.LocationName}</b>
@@ -378,206 +380,206 @@ function GoodForm({
         {(selectedGood.ItemListId === -99 ||
           (selectedGood.ItemListId !== -99 &&
             readGoodStatus === status.finish)) && (
-          <form onSubmit={onSubmitForm} id="item-form">
-            <Grid container spacing={3}>
-              <Hidden xsUp={hideLocationsSelection}>
-                <Grid item xs={6}>
-                  <Autocomplete
-                    disabled={
-                      selectedGood.ItemListId !== -99 || disableLocations
-                    }
-                    style={{ maxWidth: 274 - 15 }} //alway write the desired width - 15
-                    value={formState.Location || locations[0]}
-                    disableClearable
-                    onChange={(e, newValue) =>
-                      onAnyChange(newValue, "Location")
-                    }
-                    id="location-select"
-                    options={locations}
-                    classes={{
-                      option: classes.option,
-                    }}
-                    autoHighlight
-                    getOptionLabel={(option) => option.LocationName}
-                    renderOption={(option) => (
-                      <React.Fragment>{option.LocationName}</React.Fragment>
-                    )}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Location"
-                        variant="filled"
-                        required
-                        inputProps={{
-                          ...params.inputProps,
-                          autoComplete: "new-password", // disable autocomplete and autofill
-                          required: true,
-                        }}
-                      />
-                    )}
-                  />
-                </Grid>
-              </Hidden>
+            <form onSubmit={onSubmitForm} id="item-form">
+              <Grid container spacing={3}>
+                <Hidden xsUp={hideLocationsSelection}>
+                  <Grid item xs={6}>
+                    <Autocomplete
+                      disabled={
+                        selectedGood.ItemListId !== -99 || disableLocations
+                      }
+                      style={{ maxWidth: 274 - 15 }} //alway write the desired width - 15
+                      value={formState.Location || locations[0]}
+                      disableClearable
+                      onChange={(e, newValue) =>
+                        onAnyChange(newValue, "Location")
+                      }
+                      id="location-select"
+                      options={locations}
+                      classes={{
+                        option: classes.option,
+                      }}
+                      autoHighlight
+                      getOptionLabel={(option) => option.LocationName}
+                      renderOption={(option) => (
+                        <React.Fragment>{option.LocationName}</React.Fragment>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Location"
+                          variant="filled"
+                          required
+                          inputProps={{
+                            ...params.inputProps,
+                            autoComplete: "new-password", // disable autocomplete and autofill
+                            required: true,
+                          }}
+                        />
+                      )}
+                    />
+                  </Grid>
+                </Hidden>
 
-              <Grid item xs={6}>
-                <TextField
-                  label="Item Name"
-                  fullWidth
-                  style={{ maxWidth: 274 }}
-                  value={formState.ItemName || ""}
-                  onChange={(e) => onAnyChange(e, "ItemName")}
-                  variant="filled"
-                  required
-                  InputProps={{
-                    endAdornment: selectedGood.ItemListId !== -99 && (
-                      <InputAdornment position="end">
-                        <IconButton
-                          disabled={
-                            formState.ItemName === selectedGood.ItemName
-                          }
-                          onClick={(e) => resetTextField(e, "ItemName")}
-                        >
-                          <UndoIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={6}>
-                <TextField
-                  label="Price"
-                  fullWidth
-                  style={{ maxWidth: 274 }}
-                  value={formState.Price || ""}
-                  onChange={(e) => onAnyChange(e, "Price")}
-                  variant="filled"
-                  required
-                  type="number"
-                  InputProps={{
-                    endAdornment: selectedGood.ItemListId !== -99 && (
-                      <InputAdornment position="end">
-                        <IconButton
-                          disabled={formState.Price === selectedGood.Price}
-                          onClick={(e) => resetTextField(e, "Price")}
-                        >
-                          <UndoIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  inputProps={{
-                    min: "0.000",
-                    step: "0.001",
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={6}>
-                <TextField
-                  label="Tax"
-                  fullWidth
-                  style={{ maxWidth: 274 }}
-                  value={formState.Tax || ""}
-                  onChange={(e) => onAnyChange(e, "Tax")}
-                  variant="filled"
-                  required
-                  type="number"
-                  InputProps={{
-                    endAdornment: selectedGood.ItemListId !== -99 && (
-                      <InputAdornment position="end">
-                        <IconButton
-                          disabled={formState.Tax === selectedGood.Tax}
-                          onClick={(e) => resetTextField(e, "Tax")}
-                        >
-                          <UndoIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  inputProps={{
-                    min: "0.000",
-                    step: "0.001",
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={6}>
-                <TextField
-                  label="Total"
-                  fullWidth
-                  style={{ maxWidth: 274 }}
-                  value={formatTotal()}
-                  disabled
-                  variant="filled"
-                />
-              </Grid>
-
-              {selectedGood.ItemListId !== -99 && (
                 <Grid item xs={6}>
                   <TextField
-                    label="QR Code"
+                    label="Item Name"
                     fullWidth
                     style={{ maxWidth: 274 }}
-                    value={selectedGood.QRCode}
+                    value={formState.ItemName || ""}
+                    onChange={(e) => onAnyChange(e, "ItemName")}
+                    variant="filled"
+                    required
+                    InputProps={{
+                      endAdornment: selectedGood.ItemListId !== -99 && (
+                        <InputAdornment position="end">
+                          <IconButton
+                            disabled={
+                              formState.ItemName === selectedGood.ItemName
+                            }
+                            onClick={(e) => resetTextField(e, "ItemName")}
+                          >
+                            <UndoIcon />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={6}>
+                  <TextField
+                    label="Price"
+                    fullWidth
+                    style={{ maxWidth: 274 }}
+                    value={formState.Price || ""}
+                    onChange={(e) => onAnyChange(e, "Price")}
+                    variant="filled"
+                    required
+                    type="number"
+                    InputProps={{
+                      endAdornment: selectedGood.ItemListId !== -99 && (
+                        <InputAdornment position="end">
+                          <IconButton
+                            disabled={formState.Price === selectedGood.Price}
+                            onClick={(e) => resetTextField(e, "Price")}
+                          >
+                            <UndoIcon />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    inputProps={{
+                      min: "0.000",
+                      step: "0.001",
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={6}>
+                  <TextField
+                    label="Tax"
+                    fullWidth
+                    style={{ maxWidth: 274 }}
+                    value={formState.Tax || ""}
+                    onChange={(e) => onAnyChange(e, "Tax")}
+                    variant="filled"
+                    required
+                    type="number"
+                    InputProps={{
+                      endAdornment: selectedGood.ItemListId !== -99 && (
+                        <InputAdornment position="end">
+                          <IconButton
+                            disabled={formState.Tax === selectedGood.Tax}
+                            onClick={(e) => resetTextField(e, "Tax")}
+                          >
+                            <UndoIcon />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    inputProps={{
+                      min: "0.000",
+                      step: "0.001",
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={6}>
+                  <TextField
+                    label="Total"
+                    fullWidth
+                    style={{ maxWidth: 274 }}
+                    value={formatTotal()}
                     disabled
                     variant="filled"
                   />
                 </Grid>
-              )}
 
-              <Grid item xs={12}>
-                <TextField
-                  label="Description"
-                  multiline
-                  rows={4}
-                  rowsMax={8}
-                  style={{ width: "100%" }}
-                  variant="filled"
-                  required
-                  placeholder="Describe the item"
-                  value={formState.Description || ""}
-                  onChange={(e) => onAnyChange(e, "Description")}
-                  InputProps={{
-                    endAdornment: selectedGood.ItemListId !== -99 && (
-                      <InputAdornment position="end">
-                        <IconButton
-                          disabled={
-                            formState.Description === selectedGood.Description
-                          }
-                          onClick={(e) => resetTextField(e, "Description")}
-                        >
-                          <UndoIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
+                {selectedGood.ItemListId !== -99 && (
+                  <Grid item xs={6}>
+                    <TextField
+                      label="QR Code"
+                      fullWidth
+                      style={{ maxWidth: 274 }}
+                      value={selectedGood.QRCode}
+                      disabled
+                      variant="filled"
+                    />
+                  </Grid>
+                )}
+
+                <Grid item xs={12}>
+                  <TextField
+                    label="Description"
+                    multiline
+                    rows={4}
+                    rowsMax={8}
+                    style={{ width: "100%" }}
+                    variant="filled"
+                    required
+                    placeholder="Describe the item"
+                    value={formState.Description || ""}
+                    onChange={(e) => onAnyChange(e, "Description")}
+                    InputProps={{
+                      endAdornment: selectedGood.ItemListId !== -99 && (
+                        <InputAdornment position="end">
+                          <IconButton
+                            disabled={
+                              formState.Description === selectedGood.Description
+                            }
+                            onClick={(e) => resetTextField(e, "Description")}
+                          >
+                            <UndoIcon />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                {selectedGood.ItemListId !== -99 ? (
+                  <Grid item xs={12}>
+                    Would you like to upload an image of this item?
+                    <br />
+                    <Button
+                      onClick={onShowUploadDialog}
+                      color="primary"
+                      variant="contained"
+                      style={{ marginTop: 8 }}
+                    >
+                      Upload Image
+                    </Button>
+                  </Grid>
+                ) : null}
+
+                {selectedGood.ItemListId !== -99 ? (
+                  <Grid item xs={12}>
+                    <GoodImage QRCode={selectedGood.QRCode} />
+                  </Grid>
+                ) : null}
               </Grid>
-              {selectedGood.ItemListId !== -99 ? (
-                <Grid item xs={12}>
-                  Would you like to upload an image of this item?
-                  <br />
-                  <Button
-                    onClick={onShowUploadDialog}
-                    color="primary"
-                    variant="contained"
-                    style={{ marginTop: 8 }}
-                  >
-                    Upload Image
-                  </Button>
-                </Grid>
-              ) : null}
-
-              {selectedGood.ItemListId !== -99 ? (
-                <Grid item xs={12}>
-                  <GoodImage QRCode={selectedGood.QRCode} />
-                </Grid>
-              ) : null}
-            </Grid>
-          </form>
-        )}
+            </form>
+          )}
       </DialogContent>
 
       <DialogActions>

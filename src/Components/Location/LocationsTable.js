@@ -25,7 +25,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import clsx from "clsx";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
@@ -86,7 +85,6 @@ const useStyles = makeStyles((theme) => ({
 const mapStateToProps = ({ LocationReducer }) => ({
   locations: LocationReducer.locations,
   getLocationsStatus: LocationReducer.getLocationsStatus,
-
   deleteLocationStatus: LocationReducer.deleteLocationStatus,
 });
 const mapDispatchToProps = (dispatch) => ({
@@ -98,7 +96,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch
   ),
   deleteLocationAction: bindActionCreators(deleteLocationAction, dispatch),
-
   readBusinessAction: bindActionCreators(readBusinessAction, dispatch),
 });
 
@@ -174,6 +171,7 @@ function LocationsTable({
     const data = {
       LocationId: -99,
       LocationName: null,
+      LocationType: null,
       StreetAddress1: null,
       StreetAddress2: null,
       Country: null,
@@ -308,15 +306,15 @@ function LocationsTable({
               <TableBody>
                 {(rowsPerPage > 0
                   ? locations
-                      .filter(
-                        (loc) =>
-                          (showEnabled && loc.Enabled === "e") ||
-                          (showDisabled && loc.Enabled !== "e")
-                      )
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
+                    .filter(
+                      (loc) =>
+                        (showEnabled && loc.Enabled === "e") ||
+                        (showDisabled && loc.Enabled !== "e")
+                    )
+                    .slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
                   : locations
                 ).map((location) => (
                   <TableRow key={location.LocationId}>

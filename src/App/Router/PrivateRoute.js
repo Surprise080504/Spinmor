@@ -39,7 +39,6 @@ const PrivateRoute = ({ children, token, initializationStatus, ...rest }) => {
 
   return (
     <Route {...rest}>
-      {/*token ? children : <Redirect to="/login" />*/}
       {!token ? (
         <Redirect to="/login" />
       ) : initializationStatus !== status.finish ? (
