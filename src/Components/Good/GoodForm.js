@@ -18,6 +18,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import UndoIcon from "@material-ui/icons/Undo";
+import NativeSelect from '@material-ui/core/NativeSelect';
 
 import PaperComponent from "../Custom/PaperComponent";
 
@@ -321,28 +322,54 @@ function GoodForm({
     setUploadGoodlmageQR(selectedGood.QRCode);
     closeDialogForm();
   };
-  //
-  //
+
+  const [maxWidth, setMaxWidth] = React.useState('sm');
+
+  const handleMaxWidthChange = (event) => {
+    setMaxWidth(event.target.value);
+  };
+
   return (
     <Dialog
       open={selectedGood.ItemListId !== -1}
       onClose={null}
       keepMounted={false}
-      maxWidth="sm"
+      maxWidth={maxWidth}
       fullWidth
       PaperComponent={PaperComponent}
       aria-labelledby="draggable-dialog-title"
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {hideLocationsSelection ? (
-          <React.Fragment>
-            Create a new item at <b>{formState.Location?.LocationName}</b>
-          </React.Fragment>
-        ) : selectedGood.ItemListId === -99 ? (
-          "Create a new item"
-        ) : (
-          `Edit ${selectedGood.ItemName}`
-        )}
+        <Grid container spacing={3}>
+          <Grid item xs={10}>
+            {hideLocationsSelection ? (
+              <React.Fragment>
+                Create a new item at <b>{formState.Location?.LocationName}</b>
+              </React.Fragment>
+            ) : selectedGood.ItemListId === -99 ? (
+              "Create a new item"
+            ) : (
+              `Edit ${selectedGood.ItemName}`
+            )}
+          </Grid>
+          <Grid item xs={2}>
+            <NativeSelect
+              autoFocus
+              value={maxWidth}
+              onChange={handleMaxWidthChange}
+              inputProps={{
+                name: 'max-width',
+                id: 'max-width',
+              }}
+              variant="outlined"
+            >
+              <option value="xs">x-small</option>
+              <option value="sm">small</option>
+              <option value="md">middle</option>
+              <option value="lg">large</option>
+            </NativeSelect>
+          </Grid>
+        </Grid>
       </DialogTitle>
 
       <DialogContent>
