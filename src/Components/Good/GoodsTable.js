@@ -238,7 +238,7 @@ function GoodsTable({
       ItemListId: -99,
       LocationId: null,
       ItemName: null,
-      Description: null,
+      ItemType: null,
       Price: null,
       Tax: null,
       PriceIncludeTax: null,
@@ -317,10 +317,7 @@ function GoodsTable({
                     Location Name
                   </TableCell>
                   <TableCell align="left" scope="col">
-                    Item Name
-                  </TableCell>
-                  <TableCell align="left" scope="col">
-                    Description
+                    Item Name and Description
                   </TableCell>
                   <TableCell align="left" scope="col">
                     Price
@@ -352,8 +349,6 @@ function GoodsTable({
                     <TableCell align="left">{good.LocationName}</TableCell>
 
                     <TableCell align="left">{good.ItemName}</TableCell>
-
-                    <TableCell align="left">{good.Description}</TableCell>
 
                     <TableCell align="left">{good.Price.toFixed(2)}</TableCell>
 

@@ -19,6 +19,10 @@ import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import UndoIcon from "@material-ui/icons/Undo";
 import NativeSelect from '@material-ui/core/NativeSelect';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
 
 import PaperComponent from "../Custom/PaperComponent";
 
@@ -75,6 +79,9 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.error.dark,
     },
   },
+  formControl: {
+    width: 274 - 15,
+  }
 }));
 
 const mapStateToProps = ({ GoodReducer, LocationReducer }) => ({
@@ -147,6 +154,9 @@ function GoodForm({
   //initialize local formState to received selectedGood
   const [formState, setFormState] = React.useState(selectedGood);
   React.useEffect(() => {
+    if (selectedGood.ItemListId === -99 && locations[0].LocationType === "coffeeshop") {
+      formState["ItemType"] = "N/A";
+    }
     setFormState({
       ...selectedGood,
       Location:
@@ -177,15 +187,16 @@ function GoodForm({
   //
   const onAnyChange = (e, field) => {
     let value = null;
+    const newFormState = { ...formState };
     if (field === "Location") {
+      if (e.LocationType === "coffeeshop") {
+        newFormState["ItemType"] = "N/A";
+      }
       value = e;
     } else {
       value = e.target.value === "" ? null : e.target.value;
     }
-
-    const newFormState = { ...formState };
     newFormState[field] = value;
-
     setFormState(newFormState);
     checkIsFormSame(newFormState);
   };
@@ -224,8 +235,8 @@ function GoodForm({
     if (formState.ItemName !== selectedGood.ItemName) {
       formData["ItemName"] = formState.ItemName;
     }
-    if (formState.Description !== selectedGood.Description) {
-      formData["Description"] = formState.Description;
+    if (formState.ItemType !== selectedGood.ItemType) {
+      formData["ItemType"] = formState.ItemType;
     }
     if (formState.Price !== selectedGood.Price) {
       formData["Price"] = formState.Price;
@@ -241,12 +252,6 @@ function GoodForm({
     formData["PriceIncludeTax"] = parseFloat(
       Math.abs(formData.Price || 0.0) + Math.abs(formData.Tax || 0.0)
     );
-
-    if (!formData.Description) {
-      formData.Description = "";
-    }
-
-    // console.log(formData);
 
     if (selectedGood.ItemListId !== -99) {
       formData["ItemListId"] = selectedGood.ItemListId;
@@ -272,7 +277,7 @@ function GoodForm({
       ItemListId: -1,
       LocationId: null,
       ItemName: null,
-      Description: null,
+      ItemType: null,
       Price: null,
       Tax: null,
       PriceIncludeTax: null,
@@ -292,7 +297,7 @@ function GoodForm({
         ItemListId: -1,
         LocationId: null,
         ItemName: null,
-        Description: null,
+        ItemType: null,
         Price: null,
         Tax: null,
         PriceIncludeTax: null,
@@ -449,14 +454,33 @@ function GoodForm({
                 </Hidden>
 
                 <Grid item xs={6}>
+                  <FormControl variant="filled" className={classes.formControl}>
+                    <InputLabel id="demo-simple-select-filled-label">Item Type</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-filled-label"
+                      id="demo-simple-select-filled"
+                      value={formState.ItemType || "Main Product"}
+                      onChange={(e) => onAnyChange(e, "ItemType")}
+                    >
+                      <MenuItem key={0} value="Main Product">Main Product</MenuItem>
+                      <MenuItem key={1} value="Additions">Additions</MenuItem>
+                      <MenuItem key={2} value="N/A">N/A</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={12}>
                   <TextField
-                    label="Item Name"
-                    fullWidth
-                    style={{ maxWidth: 274 }}
-                    value={formState.ItemName || ""}
-                    onChange={(e) => onAnyChange(e, "ItemName")}
+                    label="Item name and description"
+                    multiline
+                    rows={4}
+                    rowsMax={8}
+                    style={{ width: "100%" }}
                     variant="filled"
                     required
+                    placeholder="please enter the item namme and description(up to 200 letters)"
+                    value={formState.ItemName || ""}
+                    onChange={(e) => onAnyChange(e, "ItemName")}
                     InputProps={{
                       endAdornment: selectedGood.ItemListId !== -99 && (
                         <InputAdornment position="end">
@@ -556,34 +580,6 @@ function GoodForm({
                   </Grid>
                 )}
 
-                <Grid item xs={12}>
-                  <TextField
-                    label="Description"
-                    multiline
-                    rows={4}
-                    rowsMax={8}
-                    style={{ width: "100%" }}
-                    variant="filled"
-                    required
-                    placeholder="Describe the item"
-                    value={formState.Description || ""}
-                    onChange={(e) => onAnyChange(e, "Description")}
-                    InputProps={{
-                      endAdornment: selectedGood.ItemListId !== -99 && (
-                        <InputAdornment position="end">
-                          <IconButton
-                            disabled={
-                              formState.Description === selectedGood.Description
-                            }
-                            onClick={(e) => resetTextField(e, "Description")}
-                          >
-                            <UndoIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
                 {selectedGood.ItemListId !== -99 ? (
                   <Grid item xs={12}>
                     Would you like to upload an image of this item?

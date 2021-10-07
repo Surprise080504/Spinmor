@@ -33,7 +33,6 @@ const initialState = {
     LocationId: null,
     ItemName: null,
     ItemType: null,
-    Description: null,
     Price: null,
     Tax: null,
     PriceIncludeTax: null,

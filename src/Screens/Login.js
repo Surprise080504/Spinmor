@@ -244,17 +244,17 @@ function Login({ isTokenCallLoading, tokenCallError, tokenAction }) {
 
         {localStorage.getItem("@initializationStatus") ===
           status.error_exchange && (
-          <Typography>
-            An error while getting exchange rates, please try again
-          </Typography>
-        )}
+            <Typography>
+              An error while getting exchange rates, please try again
+            </Typography>
+          )}
 
         {localStorage.getItem("@initializationStatus") ===
           status.error_login && (
-          <Typography>
-            An error while getting your info, please try again
-          </Typography>
-        )}
+            <Typography>
+              An error while getting your info, please try again
+            </Typography>
+          )}
       </Grid>
 
       <Grid
@@ -331,36 +331,36 @@ function Login({ isTokenCallLoading, tokenCallError, tokenAction }) {
 
         {(verificationLevel === "last week" ||
           verificationLevel === "not verified") && (
-          <Grid
-            container
-            item
-            direction="row"
-            justify="space-between"
-            alignItems="center"
-            xl={4}
-            lg={4}
-            md={4}
-            sm={6}
-            xs={12}
-          >
-            {/*<Grid item>
+            <Grid
+              container
+              item
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+              xl={4}
+              lg={4}
+              md={4}
+              sm={6}
+              xs={12}
+            >
+              {/*<Grid item>
             <Button variant="outlined" color="primary">
               forgot password
             </Button>
           </Grid>*/}
 
-            <Grid item>
-              <Button
-                variant="outlined"
-                color="primary"
-                component={RouterLink}
-                to="/register"
-              >
-                register
-              </Button>
+              <Grid item>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  component={RouterLink}
+                  to="/register"
+                >
+                  register
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        )}
+          )}
       </Grid>
     </Grid>
   );
