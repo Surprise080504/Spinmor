@@ -37,6 +37,9 @@ const initialState = {
     Tax: null,
     PriceIncludeTax: null,
     QRCode: null,
+    Options: null,
+    OptionsText: null,
+    Enable: null
   },
   readGoodStatus: status.not_started,
   updateGoodStatus: status.not_started,

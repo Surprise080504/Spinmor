@@ -243,6 +243,9 @@ function GoodsTable({
       Tax: null,
       PriceIncludeTax: null,
       QRCode: null,
+      Options: null,
+      OptionsText: null,
+      Enable: null
     };
 
     const e = null;
@@ -317,7 +320,7 @@ function GoodsTable({
                     Location Name
                   </TableCell>
                   <TableCell align="left" scope="col">
-                    Item Name and Description
+                    Item Name & Description
                   </TableCell>
                   <TableCell align="left" scope="col">
                     Price

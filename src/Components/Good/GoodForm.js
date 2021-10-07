@@ -153,9 +153,28 @@ function GoodForm({
   //
   //initialize local formState to received selectedGood
   const [formState, setFormState] = React.useState(selectedGood);
+  const [itemtypes, setItemtypes] = React.useState(["Main Product", "Additions", "N/A"]);
   React.useEffect(() => {
-    if (selectedGood.ItemListId === -99 && locations[0].LocationType === "coffeeshop") {
-      formState["ItemType"] = "N/A";
+    if (locations.length === 0) {
+      setItemtypes(["Main Product", "Additions", "N/A"]);
+    }
+    else {
+      if (selectedGood.ItemListId === -99) {
+        if (locations[0].LocationType !== "coffeeshop") setItemtypes(["N/A"]);
+        else setItemtypes(["Main Product", "Additions"]);
+      }
+      else {
+        const temp_location = locations.find((l) => l.LocationId === selectedGood.LocationId);
+        if (temp_location.LocationType !== "coffeeshop") setItemtypes(["N/A"]);
+        else setItemtypes(["Main Product", "Additions"]);
+      }
+    }
+    let OptionsText = "";
+    if (selectedGood.ItemListId !== -99 && selectedGood.Options === 'o') {
+      OptionsText = selectedGood.OptionsText.substring(1).substring(0, selectedGood.OptionsText.length - 2);
+    }
+    else {
+      OptionsText = selectedGood.OptionsText;
     }
     setFormState({
       ...selectedGood,
@@ -164,6 +183,7 @@ function GoodForm({
           ? null
           : locations.find((l) => l.LocationId === selectedGood.LocationId),
       ...exampleGood,
+      OptionsText
     });
   }, [selectedGood, locations, exampleGood]);
 
@@ -189,9 +209,8 @@ function GoodForm({
     let value = null;
     const newFormState = { ...formState };
     if (field === "Location") {
-      if (e.LocationType === "coffeeshop") {
-        newFormState["ItemType"] = "N/A";
-      }
+      if (e.LocationType !== "coffeeshop") setItemtypes(["N/A"]);
+      else setItemtypes(["Main Product", "Additions"]);
       value = e;
     } else {
       value = e.target.value === "" ? null : e.target.value;
@@ -248,10 +267,27 @@ function GoodForm({
     } else {
       formData["Tax"] = selectedGood.Tax;
     }
-
     formData["PriceIncludeTax"] = parseFloat(
       Math.abs(formData.Price || 0.0) + Math.abs(formData.Tax || 0.0)
     );
+    if (formState.Options !== selectedGood.Options) {
+      formData["Options"] = formState.Options;
+    }
+    if (formState.OptionsText !== selectedGood.OptionsText) {
+      if (formState.Options === "o") {
+        const tempOptions = String(formState.OptionsText).split(";");
+        let tempStr = "{";
+        let limit = tempOptions.length - 1;
+        if (String(formState.OptionsText).charAt(formState.OptionsText.length - 1) === ';') limit = tempOptions.length - 2;
+        tempOptions.forEach((option, index) => {
+          tempStr += option.trim();
+          if (index < limit)
+            tempStr += ";";
+        })
+        formData["OptionsText"] = tempStr + "}";
+      }
+      else formData["OptionsText"] = formState.OptionsText;
+    }
 
     if (selectedGood.ItemListId !== -99) {
       formData["ItemListId"] = selectedGood.ItemListId;
@@ -259,6 +295,11 @@ function GoodForm({
       formData["LocationId"] = selectedGood.LocationId;
       updateGoodAction(formData);
     } else {
+      if (formState["ItemType"] === null) {
+        if (itemtypes.length === 1) formData["ItemType"] = "N/A"
+        else formData["ItemType"] = "Main Product"
+      }
+      if (formState["Options"] === null && formState["ItemType"] == "Additions") formData["Options"] = "n"
       createGoodAction(formData);
     }
   };
@@ -282,6 +323,9 @@ function GoodForm({
       Tax: null,
       PriceIncludeTax: null,
       QRCode: null,
+      Options: null,
+      OptionsText: null,
+      Enable: null
     });
   };
 
@@ -302,6 +346,9 @@ function GoodForm({
         Tax: null,
         PriceIncludeTax: null,
         QRCode: null,
+        Options: null,
+        OptionsText: null,
+        Enable: null
       });
     } else if (
       updateGoodStatus.split(" ")[0] === status.error ||
@@ -459,12 +506,14 @@ function GoodForm({
                     <Select
                       labelId="demo-simple-select-filled-label"
                       id="demo-simple-select-filled"
-                      value={formState.ItemType || "Main Product"}
+                      value={formState.ItemType || itemtypes[0]}
                       onChange={(e) => onAnyChange(e, "ItemType")}
                     >
-                      <MenuItem key={0} value="Main Product">Main Product</MenuItem>
-                      <MenuItem key={1} value="Additions">Additions</MenuItem>
-                      <MenuItem key={2} value="N/A">N/A</MenuItem>
+                      {itemtypes.map(item => {
+                        return (
+                          <MenuItem key={item} value={item}>{item}</MenuItem>
+                        )
+                      })}
                     </Select>
                   </FormControl>
                 </Grid>
@@ -566,6 +615,55 @@ function GoodForm({
                     variant="filled"
                   />
                 </Grid>
+                {formState.ItemType === "Additions" && (
+                  <>
+                    <Grid item xs={6}>
+                      <FormControl variant="filled" className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-filled-label">Options Type</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-filled-label"
+                          id="demo-simple-select-filled"
+                          value={formState.Options || "n"}
+                          onChange={(e) => onAnyChange(e, "Options")}
+                        >
+                          <MenuItem key={0} value="n">No Options</MenuItem>
+                          <MenuItem key={1} value="o">Options</MenuItem>
+                          <MenuItem key={2} value="f">Free Text</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        disabled={(formState.Options === null || formState.Options === 'n') ? true : false}
+                        label="Options Text"
+                        multiline
+                        rows={4}
+                        rowsMax={8}
+                        style={{ width: "100%" }}
+                        variant="filled"
+                        required
+                        placeholder={formState.Options === "f" ? "Client will enter free text" : "Enter options separated by semicolon"}
+                        value={formState.OptionsText || ""}
+                        onChange={(e) => onAnyChange(e, "OptionsText")}
+                        InputProps={{
+                          endAdornment: selectedGood.ItemListId !== -99 && (
+                            <InputAdornment position="end">
+                              <IconButton
+                                disabled={
+                                  formState.OptionsText === selectedGood.OptionsText
+                                }
+                                onClick={(e) => resetTextField(e, "OptionsText")}
+                              >
+                                <UndoIcon />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                  </>
+                )}
 
                 {selectedGood.ItemListId !== -99 && (
                   <Grid item xs={6}>
