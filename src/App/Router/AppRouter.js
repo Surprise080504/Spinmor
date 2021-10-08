@@ -220,7 +220,7 @@ const AppRouter = ({
           <Locations />
         </PrivateRoute>
 
-        <PrivateRoute exact path="/goods">
+        <PrivateRoute exact path="/goods/create">
           <Goods />
         </PrivateRoute>
 

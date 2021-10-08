@@ -295,6 +295,7 @@ function GoodForm({
       formData["LocationId"] = selectedGood.LocationId;
       updateGoodAction(formData);
     } else {
+      formData["ItemGroupId"] = 1;
       if (formState["ItemType"] === null) {
         if (itemtypes.length === 1) formData["ItemType"] = "N/A"
         else formData["ItemType"] = "Main Product"

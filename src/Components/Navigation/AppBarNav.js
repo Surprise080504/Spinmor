@@ -167,8 +167,13 @@ function AppBarNav({
   };
 
   const [printMenuOpen, setPrintMenuOpen] = React.useState(true);
+  const [goodsMenuOpen, setGoodsMenuOpen] = React.useState(true);
   const onPrintClick = () => {
     setPrintMenuOpen(!printMenuOpen);
+  };
+
+  const onGoodsClick = () => {
+    setGoodsMenuOpen(!goodsMenuOpen);
   };
 
   const getPrintMenuClassName = () => {
@@ -177,6 +182,18 @@ function AppBarNav({
     }
 
     if (location.pathname.split("/")[1] === "print") {
+      return classes.menuActiveItemColor;
+    } else {
+      return classes.menuItemColor;
+    }
+  };
+
+  const getGoodsMenuClassName = () => {
+    if (goodsMenuOpen) {
+      return "";
+    }
+
+    if (location.pathname.split("/")[1] === "goods") {
       return classes.menuActiveItemColor;
     } else {
       return classes.menuItemColor;
@@ -309,16 +326,48 @@ function AppBarNav({
 
               <ListItem
                 button
-                component={Link}
-                to="/goods"
-                className={
-                  location.pathname === "/goods"
-                    ? classes.menuActiveItemColor
-                    : classes.menuItemColor
-                }
+                onClick={onPrintClick}
+                className={getPrintMenuClassName()}
+                classes={{
+                  gutters: classes.printMenuGutter,
+                }}
               >
-                <ListItemText primary="Goods & Items" />
+                <ListItemText
+                  primary="Goods & Items"
+                  className={classes.printMenuText}
+                />
+                {goodsMenuOpen ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+
+              <Collapse in={printMenuOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={Link}
+                    to="/goods/create"
+                    className={
+                      location.pathname === "/goods/create"
+                        ? clsx(classes.menuActiveItemColor, classes.nested)
+                        : clsx(classes.menuItemColor, classes.nested)
+                    }
+                  >
+                    <ListItemText primary="Create & View" />
+                  </ListItem>
+                  <ListItem
+                    button
+                    // className={classes.nested}
+                    component={Link}
+                    to="/goods/rewards"
+                    className={
+                      location.pathname === "/goods/rewards"
+                        ? clsx(classes.menuActiveItemColor, classes.nested)
+                        : clsx(classes.menuItemColor, classes.nested)
+                    }
+                  >
+                    <ListItemText primary="Rewards & Additions" />
+                  </ListItem>
+                </List>
+              </Collapse>
 
               <ListItem
                 button
