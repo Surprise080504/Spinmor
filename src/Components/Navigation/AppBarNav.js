@@ -357,9 +357,9 @@ function AppBarNav({
                     button
                     // className={classes.nested}
                     component={Link}
-                    to="/goods/rewards"
+                    to="/goods/rewards-additions"
                     className={
-                      location.pathname === "/goods/rewards"
+                      location.pathname === "/goods/rewards-additions"
                         ? clsx(classes.menuActiveItemColor, classes.nested)
                         : clsx(classes.menuItemColor, classes.nested)
                     }

@@ -79,7 +79,7 @@ function Goods({ isMenuOpen, selectedGood, uploadGoodImageQR }) {
 
       <Grid item>
         <Typography variant="h2" component="h1">
-          Goods & Items
+          Create & View
         </Typography>
       </Grid>
 
