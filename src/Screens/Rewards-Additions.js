@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
@@ -65,6 +66,7 @@ function Rewards({
   setGetLocationsStatus
 }) {
   const classes = useStyles();
+  const history = useHistory();
   const [message, setMessage] = React.useState('');
 
   React.useEffect(() => {
@@ -114,6 +116,7 @@ function Rewards({
           variant="contained"
           color="primary"
           disabled={getLocationsStatus === status.loading ? true : false}
+          onClick={() => history.push("/goods/rewards-additions/rewards")}
           endIcon={
             getLocationsStatus === status.loading && (
               <CircularProgress size="0.875rem" />

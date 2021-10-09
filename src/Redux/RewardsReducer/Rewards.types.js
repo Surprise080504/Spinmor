@@ -1,0 +1,4 @@
+export const GET_ALL_REWARDS = "GET_ALL_REWARDS";
+export const CREATE_REWARD = "CREATE_REWARD";
+export const UPDATE_REWARD = "UPDATE_REWARD";
+export const DELETE_REWARD = "DELETE_REWARD";
