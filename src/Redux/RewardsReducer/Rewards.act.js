@@ -6,7 +6,7 @@ import {
   DELETE_REWARD
 } from "./Rewards.types";
 import { getError, clearError } from "../ErrorReducer/Error.act";
-import { axiosInstance, status } from "../../api/api";
+import { axiosInstance } from "../../api/api";
 
 const fetchAllRewards = (data) => ({
   type: GET_ALL_REWARDS,
@@ -28,43 +28,38 @@ const removeReward = (data) => ({
   payload: data,
 });
 
-export const getAllRewards = (LocationIds) => async (dispatch, getState) => {
+export const getAllRewards = (locations) => async (dispatch, getState) => {
   let allRewards = [];
   await dispatch(clearError());
-  await async.forEachOf(LocationIds, async (value, key, callback) => {
-    try {
-      const res = await axiosInstance({
-        method: "get",
-        url: "/Coffee/ReadAllRewards",
-        headers: {
-          Authorization: "Bearer " + getState().AppReducer.token,
-        },
-        withCredentials: true,
-        params: { LocationId: value }
-      });
-      if (res.data) {
+  await locations.forEach(location => {
+    axiosInstance({
+      method: "get",
+      url: "/Coffee/ReadAllRewards",
+      headers: {
+        Authorization: "Bearer " + getState().AppReducer.token
+      },
+      withCredentials: true,
+      params: { LocationId: location.LocationId }
+    })
+      .then(res => {
         allRewards = allRewards.concat(res.data);
-        callback();
-      } else {
-        callback(`Error 404, Rewards that LocationId is equal to ${value}, was not found!`);
-      }
-    } catch (error) {
-      let caughtError = 500;
-
-      if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        caughtError = error.response.status;
-      } else if (error.request) {
-        console.log(error.request);
-      } else {
-        console.log("Error", error.message);
-      }
-      callback(`Error ${caughtError}, Rewards that LocationId is equal to ${value}, got Error!`);
-    }
-  }, err => {
-    if (err) dispatch(getError(err));
+      })
+      .catch(error => {
+        let caughtError = 500;
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          caughtError = error.response.status;
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
+        dispatch(getError({ getAllRewards: `Error ${caughtError}, Rewards that LocationId is equal to ${location.LocationId}, got Error!` }));
+        return;
+      })
   });
+  console.log(allRewards);
   await dispatch(fetchAllRewards(allRewards));
 };
 

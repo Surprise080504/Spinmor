@@ -7,12 +7,8 @@ import LocationReducer from "./LocationReducer/Location.red";
 import GoodReducer from "./GoodReducer/Good.red";
 import PrintReducer from "./PrintReducer/Print.red";
 import ReportReducer from "./ReportReducer/Report.red";
-
-// export default combineReducers({
-//   AppReducer,
-//   ScannerReducer,
-//   BasketReducer,
-// });
+import ErrorReducer from "./ErrorReducer/Error.red";
+import RewardsReducer from "./RewardsReducer/Rewards.red";
 
 const appReducer = combineReducers({
   AppReducer,
@@ -20,6 +16,8 @@ const appReducer = combineReducers({
   GoodReducer,
   PrintReducer,
   ReportReducer,
+  error: ErrorReducer,
+  rewards: RewardsReducer
 });
 
 const rootReducer = (state, action) => {

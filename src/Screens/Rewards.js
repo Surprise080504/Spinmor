@@ -2,11 +2,11 @@ import React from "react";
 import { useSelector } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 
 import { drawerWidth } from "../Assets/consts";
+import RewardsTable from "../Components/Rewards/RewardsTable";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -64,6 +64,13 @@ function Rewards() {
           Rewards Program
         </Typography>
       </Grid>
+
+      <Grid item>
+        <Typography variant="h2" component="h1">
+          <RewardsTable />
+        </Typography>
+      </Grid>
+
     </Grid>
   );
 }
