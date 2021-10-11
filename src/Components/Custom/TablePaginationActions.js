@@ -1,9 +1,9 @@
 import { IconButton } from "@material-ui/core";
 import {
-  FirstPageIcon,
+  FirstPage as FirstPageIcon,
   KeyboardArrowLeft,
   KeyboardArrowRight,
-  LastPageIcon
+  LastPage as LastPageIcon
 } from "@material-ui/icons";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 

@@ -65,10 +65,8 @@ function Rewards() {
         </Typography>
       </Grid>
 
-      <Grid item>
-        <Typography variant="h2" component="h1">
-          <RewardsTable />
-        </Typography>
+      <Grid item style={{ width: '100%' }}>
+        <RewardsTable />
       </Grid>
 
     </Grid>

@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -8,11 +9,10 @@ import {
   Typography,
   Button
 } from "@material-ui/core";
-import { status } from "../../api/api";
 
 function ConfirmDialog(props) {
 
-  const { title, deleteStatus, open, cancelDelete, confirmDelete } = props;
+  const { title, loading, open, cancelDelete, confirmDelete, error } = props;
 
   return (
     <Dialog
@@ -22,7 +22,7 @@ function ConfirmDialog(props) {
       aria-describedby="delete-location-dialog-description"
     >
       <DialogTitle id="delete-location-dialog-title">
-        Delete location
+        Delete Reward
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="delete-location-dialog-description">
@@ -31,11 +31,11 @@ function ConfirmDialog(props) {
           All items of that location will be deleted.
         </DialogContentText>
 
-        {deleteStatus === status.loading && <CircularProgress />}
+        {loading && <CircularProgress />}
 
-        {deleteStatus.split(" ")[0] === status.error && (
+        {error && (
           <Typography variant="body2" align="left" color="error">
-            Error deleting location: {deleteStatus.split(" ")[1]}
+            {error}
           </Typography>
         )}
       </DialogContent>
@@ -43,7 +43,7 @@ function ConfirmDialog(props) {
         <Button
           onClick={() => confirmDelete()}
           color="primary"
-          disabled={deleteStatus === status.loading}
+          disabled={loading}
           variant="contained"
         >
           Delete
@@ -55,7 +55,7 @@ function ConfirmDialog(props) {
           onClick={() => cancelDelete()}
           color="primary"
           autoFocus
-          disabled={deleteStatus === status.loading}
+          disabled={loading}
           variant="contained"
         >
           Cancel
@@ -65,4 +65,4 @@ function ConfirmDialog(props) {
   )
 }
 
-export default ConfirmDialog;
+export default React.memo(ConfirmDialog);

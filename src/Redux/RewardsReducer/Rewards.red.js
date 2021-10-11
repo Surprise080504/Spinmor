@@ -2,11 +2,17 @@ import {
   GET_ALL_REWARDS,
   CREATE_REWARD,
   UPDATE_REWARD,
-  DELETE_REWARD
+  DELETE_REWARD,
+  GET_ALL_ITEMS,
+  GET_LINKED_REWARDS,
+  SET_ALL_ITEMS,
+  SET_LINKED_REWARDS
 } from "./Rewards.types";
 
 const initialState = {
-  allRewards: []
+  allRewards: [],
+  allItems: [],
+  linkedRewards: []
 };
 
 const RewardsReducer = (state = initialState, action) => {
@@ -14,13 +20,31 @@ const RewardsReducer = (state = initialState, action) => {
     case GET_ALL_REWARDS: {
       return {
         ...state,
-        allRewards: action.payload.sort((a, b) =>
-          a.Name.toLowerCase() > b.Name.toLowerCase()
-            ? 1
-            : b.Name.toLowerCase() > a.Name.toLowerCase()
-              ? -1
-              : 0
-        ),
+        allRewards: action.payload
+      };
+    }
+    case GET_ALL_ITEMS: {
+      return {
+        ...state,
+        allItems: action.payload
+      };
+    }
+    case GET_LINKED_REWARDS: {
+      return {
+        ...state,
+        linkedRewards: action.payload
+      };
+    }
+    case SET_ALL_ITEMS: {
+      return {
+        ...state,
+        allItems: []
+      };
+    }
+    case SET_LINKED_REWARDS: {
+      return {
+        ...state,
+        linkedRewards: []
       };
     }
     case CREATE_REWARD: {
