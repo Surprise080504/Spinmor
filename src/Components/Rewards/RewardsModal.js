@@ -124,6 +124,7 @@ function RewardsModal(props) {
                   id="LocationId"
                   value={data.LocationId}
                   onChange={handleSelectChange}
+                  disabled={mode ? false : true}
                 >
                   <MenuItem value={-1}>None</MenuItem>
                   {locations.filter(location => location.LocationType === "coffeeshop").map(location => {

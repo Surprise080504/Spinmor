@@ -144,6 +144,7 @@ function Rewards({
               <CircularProgress size="0.875rem" />
             )
           }
+          onClick={() => history.push("/goods/rewards-additions/additions")}
         >
           Manage Additions
         </Button>

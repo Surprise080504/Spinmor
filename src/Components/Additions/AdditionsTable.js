@@ -19,25 +19,18 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import {
   EditOutlined as EditOutlinedIcon,
-  DeleteForeverOutlined as DeleteForeverOutlinedIcon,
-  Link as LinkIcon
+  DeleteForeverOutlined as DeleteForeverOutlinedIcon
 } from "@material-ui/icons";
 
 import {
-  getAllRewards,
-  deleteReward,
-  getAllItems,
-  getLinkedRewards,
-  emptyAllItems,
-  emptyLinkedRewards
-} from "../../Redux/RewardsReducer/Rewards.act";
+  getAllAdditions,
+  getAllLocationItems
+} from "../../Redux/AdditionsReducer/Additions.act";
 import { clearError } from "../../Redux/ErrorReducer/Error.act";
 import { getLocationsAction, setGetLocationsStatus } from "../../Redux/LocationReducer/Location.act";
 import { status } from "../../api/api";
 import TablePaginationActions from "../Custom/TablePaginationActions";
-import ConfirmDialog from "../Custom/ConfirmDialog";
-import RewardsModal from "./RewardsModal";
-import LinkModal from "./LinkModal";
+import AdditionsModal from "./AdditionsModal";
 
 const useStyles = makeStyles((theme) => ({
   headerColor: {
@@ -56,9 +49,8 @@ function RewardsTable() {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const allRewards = useSelector((state) => state.rewards.allRewards);
-  const allItems = useSelector((state) => state.rewards.allItems);
-  const linkedRewards = useSelector((state) => state.rewards.linkedRewards);
+  const allAdditions = useSelector((state) => state.additions.allAdditions);
+  const allLocationItems = useSelector((state) => state.additions.allLocationItems);
   const error = useSelector((state) => state.error);
   const getLocationsStatus = useSelector((state) => state.LocationReducer.getLocationsStatus);
   const locations = useSelector((state) => state.LocationReducer.locations);
@@ -73,9 +65,11 @@ function RewardsTable() {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmTitle, setConfirmTitle] = useState("");
-  const [linkLoading, setLinkLoading] = useState(false);
-  const [linkOpen, setLinkOpen] = useState(false);
-  const [linkTitle, setLinkTitle] = useState("");
+
+  const init = async () => {
+    await dispatch(getAllLocationItems(locations.filter(location => location.LocationType === "coffeeshop"), setPageLoading));
+    await dispatch(getAllAdditions(locations.filter(location => location.LocationType === "coffeeshop"), setPageLoading));
+  }
 
   useEffect(() => {
     setPageLoading(true);
@@ -85,20 +79,37 @@ function RewardsTable() {
 
   useEffect(() => {
     if (getLocationsStatus === status.not_started) dispatch(getLocationsAction());
-    if (getLocationsStatus === status.finish) {
-      dispatch(getAllRewards(locations.filter(location => location.LocationType === "coffeeshop"), setPageLoading));
-    }
+    if (getLocationsStatus === status.finish) init();
   }, [getLocationsStatus]);
 
   useEffect(() => {
-    let tempData = allRewards.sort((a, b) =>
-      a.Name.toLowerCase() > b.Name.toLowerCase()
+    let tempArr = [];
+    allAdditions.sort((a, b) =>
+      a.LinkName.toLowerCase() > b.LinkName.toLowerCase()
         ? 1
-        : b.Name.toLowerCase() > a.Name.toLowerCase()
+        : b.LinkName.toLowerCase() > a.LinkName.toLowerCase()
           ? -1
-          : 0);
-    setData(tempData);
-  }, [allRewards]);
+          : 0).forEach(addition => {
+            let MainProducts = "";
+            let AdditionProducts = "";
+            addition.MainProductId.forEach(mp => {
+              const tempItem = allLocationItems.find(item => item.ItemListid === mp);
+              if (tempItem !== undefined) MainProducts += String(tempItem.ItemName).substring(0, 50) + ", ";
+            });
+            addition.AdditionProducts.forEach(ap => {
+              const tempItem = allLocationItems.find(item => item.ItemListid === ap);
+              if (tempItem !== undefined) AdditionProducts += String(tempItem.ItemName).substring(0, 50) + ", ";
+            });
+            tempArr.push({
+              LinkName: addition.LinkName,
+              LocationId: addition.LocationId,
+              LinkedAdditionsID: addition.LinkedAdditionsID,
+              MainProducts,
+              AdditionProducts
+            });
+          });
+    setData(tempArr);
+  }, [allAdditions]);
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -114,50 +125,15 @@ function RewardsTable() {
 
   const handleNew = async () => {
     await setSelectedData({
-      CoffeeRewardsId: -1,
-      HowMany: 0,
-      Name: "",
-      Message: "",
-      LocationId: -1
+      LinkName: "",
+      LocationId: -1,
+      LinkedAdditionsID: -1,
+      MainProductId: [],
+      AdditionProducts: []
     });
-    await setModalTitle("Create New Reward");
+    await setModalTitle("Create New Addition");
     await setMode(true);
     await setModalOpen(true);
-  }
-
-  const handleUpdate = async (reward) => {
-    await setSelectedData(reward);
-    await setModalTitle(`Edit ${reward.Name}`);
-    await setMode(false);
-    await setModalOpen(true);
-  }
-
-  const openConfirm = async (reward) => {
-    await setSelectedData(reward);
-    await setConfirmTitle(reward.Name);
-    await setConfirmOpen(true);
-  }
-
-  const handleDelete = () => {
-    setConfirmLoading(true);
-    dispatch(deleteReward(selectedData, setConfirmLoading, setConfirmOpen));
-  }
-
-  const cancelDelete = () => {
-    setConfirmOpen(false);
-    dispatch(clearError());
-  }
-
-  const handleLink = async (reward) => {
-    await setSelectedData(reward);
-    await dispatch(emptyAllItems());
-    await dispatch(emptyLinkedRewards());
-    await setLinkLoading(true);
-    await setLinkTitle(`Rewards Program ${reward.Name} Buy ${reward.HowMany} and get 1 free`);
-    await setLinkOpen(true);
-    await dispatch(getAllItems(reward.LocationId));
-    await dispatch(getLinkedRewards(reward.CoffeeRewardsId));
-    await setLinkLoading(false);
   }
 
   return (
@@ -167,12 +143,17 @@ function RewardsTable() {
           <CircularProgress />
         </Grid>
       )}
-      {error.getAllRewards && (
+      {error.getAllAdditions && (
         <Grid item>
-          <Typography variant="body1" color="error">{error.getAllRewards}</Typography>
+          <Typography variant="body1" color="error">{error.getAllAdditions}</Typography>
         </Grid>
       )}
-      {pageLoading === false && !error.getAllRewards && (
+      {error.getAllLocationItems && (
+        <Grid item>
+          <Typography variant="body1" color="error">{error.getAllLocationItems}</Typography>
+        </Grid>
+      )}
+      {(pageLoading === false && !error.getAllAdditions && !error.getAllLocationItems) && (
         <>
           <Grid item>
             <Button
@@ -188,16 +169,22 @@ function RewardsTable() {
           <Grid item style={{ width: "100%" }}>
             <TableContainer component={Paper}>
               <Table aria-label="rewards table">
+                <colgroup>
+                  <col width="20%" />
+                  <col width="40%" />
+                  <col width="30%" />
+                  <col width="10%" />
+                </colgroup>
                 <TableHead>
                   <TableRow className={classes.headerColor}>
                     <TableCell align="left" scope="col">
-                      Reward Name
+                      Name
                     </TableCell>
                     <TableCell align="left" scope="col">
-                      How Many
+                      Main Products
                     </TableCell>
                     <TableCell align="left" scope="col">
-                      Message When Achived
+                      Additions
                     </TableCell>
                     <TableCell align="center" scope="col">
                       Actions
@@ -211,26 +198,21 @@ function RewardsTable() {
                       page * rowsPerPage,
                       page * rowsPerPage + rowsPerPage
                     )
-                    : allRewards
-                  ).map((reward, index) => (
+                    : allAdditions
+                  ).map((addition, index) => (
                     <TableRow key={index}>
-                      <TableCell align="left">{reward.Name}</TableCell>
-                      <TableCell align="left">{reward.HowMany}</TableCell>
-                      <TableCell align="left">{reward.Message}</TableCell>
+                      <TableCell align="left" style={{ fontSize: 20 }}>{addition.LinkName}</TableCell>
+                      <TableCell align="left">{addition.MainProducts}</TableCell>
+                      <TableCell align="left">{addition.AdditionProducts}</TableCell>
                       <TableCell padding="checkbox">
                         <div className={classes.actionsCell}>
                           <IconButton
-                            onClick={(e) => handleUpdate(reward)}
+                          // onClick={(e) => handleUpdate(addition)}
                           >
                             <EditOutlinedIcon color="primary" />
                           </IconButton>
                           <IconButton
-                            onClick={() => handleLink(reward)}
-                          >
-                            <LinkIcon color="secondary" />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => openConfirm(reward)}
+                          // onClick={() => openConfirm(addition)}
                           >
                             <DeleteForeverOutlinedIcon />
                           </IconButton>
@@ -250,7 +232,7 @@ function RewardsTable() {
                         { label: "All", value: -1 },
                       ]}
                       colSpan={3}
-                      count={allRewards.length}
+                      count={allAdditions.length}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       SelectProps={{
@@ -268,7 +250,7 @@ function RewardsTable() {
           </Grid>
         </>
       )}
-      <RewardsModal
+      <AdditionsModal
         mode={mode}
         data={selectedData}
         title={modalTitle}
@@ -277,22 +259,6 @@ function RewardsTable() {
         loading={modalLoading}
         setOpen={setModalOpen}
         setLoading={setModalLoading}
-      />
-      <ConfirmDialog
-        title={confirmTitle}
-        loading={confirmLoading}
-        open={confirmOpen}
-        cancelDelete={cancelDelete}
-        confirmDelete={handleDelete}
-        error={error.deleteReward ? error.deleteReward : ''}
-      />
-      <LinkModal
-        open={linkOpen}
-        title={linkTitle}
-        loading={linkLoading}
-        setOpen={setLinkOpen}
-        setLoading={setLinkLoading}
-        data={selectedData}
       />
     </>
   );

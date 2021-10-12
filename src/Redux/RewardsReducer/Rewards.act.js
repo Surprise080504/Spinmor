@@ -1,4 +1,3 @@
-import async from "async";
 import {
   GET_ALL_REWARDS,
   CREATE_REWARD,

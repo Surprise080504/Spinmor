@@ -20,6 +20,7 @@ import Locations from "../../Screens/Locations";
 import Goods from "../../Screens/Goods";
 import Rewards_Additions from "../../Screens/Rewards-Additions";
 import Rewards from "../../Screens/Rewards";
+import Additions from "../../Screens/Additions";
 import PrintLabels from "../../Screens/PrintLabels";
 import PrintCards from "../../Screens/PrintCards";
 import Print from "../../Screens/Print";
@@ -232,6 +233,10 @@ const AppRouter = ({
 
         <PrivateRoute exact path="/goods/rewards-additions/rewards">
           <Rewards />
+        </PrivateRoute>
+
+        <PrivateRoute exact path="/goods/rewards-additions/additions">
+          <Additions />
         </PrivateRoute>
 
         <PrivateRoute exact path="/print/labels">

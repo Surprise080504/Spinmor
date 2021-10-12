@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 
 import { drawerWidth } from "../Assets/consts";
-import RewardsTable from "../Components/Rewards/RewardsTable";
+import AdditionsTable from "../Components/Additions/AdditionsTable";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function Rewards() {
+function Additions() {
   const classes = useStyles();
   const isMenuOpen = useSelector((state) => state.AppReducer.isMenuOpen);
 
@@ -61,16 +61,16 @@ function Rewards() {
 
       <Grid item>
         <Typography variant="h2" component="h1">
-          Manage Rewards Program
+          Manage Additions
         </Typography>
       </Grid>
 
       <Grid item style={{ width: '100%' }}>
-        <RewardsTable />
+        <AdditionsTable />
       </Grid>
 
     </Grid>
   );
 }
 
-export default Rewards;
+export default Additions;

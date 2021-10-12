@@ -9,6 +9,7 @@ import PrintReducer from "./PrintReducer/Print.red";
 import ReportReducer from "./ReportReducer/Report.red";
 import ErrorReducer from "./ErrorReducer/Error.red";
 import RewardsReducer from "./RewardsReducer/Rewards.red";
+import AdditionsReducer from "./AdditionsReducer/Additions.red";
 
 const appReducer = combineReducers({
   AppReducer,
@@ -17,7 +18,8 @@ const appReducer = combineReducers({
   PrintReducer,
   ReportReducer,
   error: ErrorReducer,
-  rewards: RewardsReducer
+  rewards: RewardsReducer,
+  additions: AdditionsReducer
 });
 
 const rootReducer = (state, action) => {

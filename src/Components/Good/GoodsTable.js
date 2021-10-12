@@ -93,8 +93,6 @@ const mapStateToProps = ({ LocationReducer, GoodReducer }) => ({
 
   locationsGoods: GoodReducer.locationsGoods,
   allGoods: GoodReducer.allGoods,
-
-  selectedGood: GoodReducer.selectedGood,
 });
 const mapDispatchToProps = (dispatch) => ({
   getLocationsAction: bindActionCreators(getLocationsAction, dispatch),
@@ -130,7 +128,6 @@ function GoodsTable({
   updateLocationAnyStatus,
   setAllGoods,
 
-  selectedGood,
   setSelectedGood,
   deleteGoodAction,
 }) {
