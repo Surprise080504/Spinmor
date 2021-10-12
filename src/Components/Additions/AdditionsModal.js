@@ -85,7 +85,7 @@ function AdditionsModal(props) {
       dispatch(getError({ createAddition: 'Please select the Location!' }));
       return;
     }
-    if (mode) dispatch(createAddition(data, setLoading, setOpen));
+    dispatch(createAddition(data, setLoading, setOpen));
   }
 
   const handleInputChange = (e) => {
@@ -129,7 +129,7 @@ function AdditionsModal(props) {
     if (data.LocationId > -1) {
       setAllItems(allLocationItems.filter(item => item.LocationId === data.LocationId));
     }
-  }, [data.LocationId]);
+  }, [data]);
 
   return (
     <Dialog

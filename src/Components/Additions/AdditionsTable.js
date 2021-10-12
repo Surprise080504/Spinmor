@@ -24,13 +24,15 @@ import {
 
 import {
   getAllAdditions,
-  getAllLocationItems
+  getAllLocationItems,
+  deleteAddition
 } from "../../Redux/AdditionsReducer/Additions.act";
 import { clearError } from "../../Redux/ErrorReducer/Error.act";
 import { getLocationsAction, setGetLocationsStatus } from "../../Redux/LocationReducer/Location.act";
 import { status } from "../../api/api";
 import TablePaginationActions from "../Custom/TablePaginationActions";
 import AdditionsModal from "./AdditionsModal";
+import ConfirmDialog from "../Custom/ConfirmDialog";
 
 const useStyles = makeStyles((theme) => ({
   headerColor: {
@@ -136,6 +138,29 @@ function RewardsTable() {
     await setModalOpen(true);
   }
 
+  const handleUpdate = async (LinkedAdditionsID, LinkName) => {
+    await setSelectedData(allAdditions.filter(addition => addition.LinkedAdditionsID === LinkedAdditionsID)[0]);
+    await setModalTitle(`Edit ${LinkName}`);
+    await setMode(false);
+    await setModalOpen(true);
+  }
+
+  const openConfirm = async (LinkedAdditionsID, LinkName) => {
+    await setSelectedData(allAdditions.filter(addition => addition.LinkedAdditionsID === LinkedAdditionsID)[0]);
+    await setConfirmTitle(LinkName);
+    await setConfirmOpen(true);
+  }
+
+  const handleDelete = () => {
+    setConfirmLoading(true);
+    dispatch(deleteAddition(selectedData, setConfirmLoading, setConfirmOpen));
+  }
+
+  const cancelDelete = () => {
+    setConfirmOpen(false);
+    dispatch(clearError());
+  }
+
   return (
     <>
       {pageLoading && (
@@ -207,12 +232,12 @@ function RewardsTable() {
                       <TableCell padding="checkbox">
                         <div className={classes.actionsCell}>
                           <IconButton
-                          // onClick={(e) => handleUpdate(addition)}
+                            onClick={(e) => handleUpdate(addition.LinkedAdditionsID, addition.LinkName)}
                           >
                             <EditOutlinedIcon color="primary" />
                           </IconButton>
                           <IconButton
-                          // onClick={() => openConfirm(addition)}
+                            onClick={() => openConfirm(addition.LinkedAdditionsID, addition.LinkName)}
                           >
                             <DeleteForeverOutlinedIcon />
                           </IconButton>
@@ -259,6 +284,14 @@ function RewardsTable() {
         loading={modalLoading}
         setOpen={setModalOpen}
         setLoading={setModalLoading}
+      />
+      <ConfirmDialog
+        title={confirmTitle}
+        loading={confirmLoading}
+        open={confirmOpen}
+        cancelDelete={cancelDelete}
+        confirmDelete={handleDelete}
+        error={error.deleteAddition ? error.deleteAddition : ''}
       />
     </>
   );

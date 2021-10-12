@@ -1,7 +1,8 @@
 import {
   GET_ALL_ADDITIONS,
   GET_ALL_LOCATION_ITEMS,
-  CREATE_ADDITION
+  CREATE_ADDITION,
+  DELETE_ADDITION
 } from "./Additions.types";
 import { getError, clearError } from "../ErrorReducer/Error.act";
 import { axiosInstance } from "../../api/api";
@@ -18,6 +19,11 @@ const fetchAllLocationItems = (data) => ({
 
 const addAddition = (data) => ({
   type: CREATE_ADDITION,
+  payload: data,
+});
+
+const removeAddition = (data) => ({
+  type: DELETE_ADDITION,
   payload: data,
 });
 
@@ -134,5 +140,40 @@ export const createAddition = (data, setLoading, setOpen) => async (dispatch, ge
       console.log("Error", error.message);
     }
     dispatch(getError({ createAddition: `Error ${caughtError}, New addition wasn't created!` }));
+  }
+}
+
+export const deleteAddition = (data, setConfirmLoading, setConfirmOpen) => async (dispatch, getState) => {
+  await dispatch(clearError());
+  try {
+    const res = await axiosInstance({
+      method: "delete",
+      url: "/Coffee/DeleteLinkAdditions",
+      headers: {
+        Authorization: "Bearer " + getState().AppReducer.token,
+      },
+      withCredentials: true,
+      params: { AdditionLinkId: data.LinkedAdditionsID }
+    });
+    if (res) {
+      dispatch(removeAddition(data));
+      setConfirmLoading(false);
+      setConfirmOpen(false);
+    }
+    else dispatch(getError({ deleteAddition: `Error 500, This addition wasn't deleted!` }));
+  } catch (error) {
+    let caughtError = 500;
+
+    if (error.response) {
+      console.log(error.response.data);
+      console.log(error.response.status);
+      caughtError = error.response.status;
+    } else if (error.request) {
+      console.log(error.request);
+    } else {
+      console.log("Error", error.message);
+    }
+    dispatch(getError({ deleteAddition: `Error ${caughtError}, This addition wasn't deleted!` }));
+    setConfirmLoading(false);
   }
 }
