@@ -27,7 +27,14 @@ import ApplicationNotStarted from "../Components/Application/ApplicationNotStart
 import ApplicationCompletedNoProduction from "../Components/Application/ApplicationCompletedNoProduction";
 import UnknownHomeStep from "../Components/Home/UnknownHomeStep";
 
-function getStepContent(homePageStage, applicationStage) {
+import ApplyStage1 from "../Components/Application/Australia/ApplyStage1";
+
+function getStepContent(homePageStage, applicationStage, count) {
+  if (count === 99) {
+    return (
+      <ApplyStage1 />
+    );
+  }
   if (homePageStage === -1) {
     return (
       <Grid item style={{ paddingTop: 64 }}>
@@ -168,7 +175,7 @@ function Home({
       <div style={{ marginTop: 16 }} />
 
       {prodStatus === "Sandbox" &&
-        getStepContent(homePage.Stage, applicationStage)}
+        getStepContent(homePage.Stage, applicationStage, homePage.Count)}
     </Grid>
   );
 }
