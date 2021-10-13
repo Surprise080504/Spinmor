@@ -35,7 +35,7 @@ import {
 } from "../../Redux/AppReducer/App.act";
 
 import { drawerWidth } from "../../Assets/consts";
-import spinmorLogo from "../../Assets/images/logo.jpeg";
+import spinmorLogo from "../../Assets/images/logo-new.jpg";
 import SupportDialog from "./SupportDialog";
 
 const useStyles = makeStyles((theme) => ({
@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
 
   spinmorTitle: {
@@ -168,12 +168,17 @@ function AppBarNav({
 
   const [printMenuOpen, setPrintMenuOpen] = React.useState(true);
   const [goodsMenuOpen, setGoodsMenuOpen] = React.useState(true);
+  const [adminMenuOpen, setAdminMenuOpen] = React.useState(true);
   const onPrintClick = () => {
     setPrintMenuOpen(!printMenuOpen);
   };
 
   const onGoodsClick = () => {
     setGoodsMenuOpen(!goodsMenuOpen);
+  };
+
+  const onAdminClick = () => {
+    setAdminMenuOpen(!adminMenuOpen);
   };
 
   const getPrintMenuClassName = () => {
@@ -194,6 +199,18 @@ function AppBarNav({
     }
 
     if (location.pathname.split("/")[1] === "goods") {
+      return classes.menuActiveItemColor;
+    } else {
+      return classes.menuItemColor;
+    }
+  };
+
+  const getAdminMenuClassName = () => {
+    if (adminMenuOpen) {
+      return "";
+    }
+
+    if (location.pathname.split("/")[1] === "admin") {
       return classes.menuActiveItemColor;
     } else {
       return classes.menuItemColor;
@@ -258,8 +275,8 @@ function AppBarNav({
           <img
             src={spinmorLogo}
             alt="logo"
-            width={drawerWidth - 80}
-          // height={48}
+            width={drawerWidth - 100}
+            height={60}
           />
 
           <IconButton onClick={handleDrawerClose}>
@@ -287,29 +304,84 @@ function AppBarNav({
 
               <ListItem
                 button
-                component={Link}
-                to="/profile/user"
-                className={
-                  location.pathname === "/profile/user"
-                    ? classes.menuActiveItemColor
-                    : classes.menuItemColor
-                }
+                onClick={onAdminClick}
+                className={getAdminMenuClassName()}
+                classes={{
+                  gutters: classes.printMenuGutter,
+                }}
               >
-                <ListItemText primary="User Profile" />
+                <ListItemText
+                  primary="Administration"
+                  className={classes.printMenuText}
+                />
+                {goodsMenuOpen ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
 
-              <ListItem
-                button
-                component={Link}
-                to="/profile/business"
-                className={
-                  location.pathname === "/profile/business"
-                    ? classes.menuActiveItemColor
-                    : classes.menuItemColor
-                }
-              >
-                <ListItemText primary="Business Profile" />
-              </ListItem>
+              <Collapse in={adminMenuOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={Link}
+                    to="/admin/profile/user"
+                    className={
+                      location.pathname === "/admin/profile/user"
+                        ? clsx(classes.menuActiveItemColor, classes.nested)
+                        : clsx(classes.menuItemColor, classes.nested)
+                    }
+                  >
+                    <ListItemText primary="Operator Profile" />
+                  </ListItem>
+                  <ListItem
+                    button
+                    // className={classes.nested}
+                    component={Link}
+                    to="/admin/profile/business"
+                    className={
+                      location.pathname === "/admin/profile/business"
+                        ? clsx(classes.menuActiveItemColor, classes.nested)
+                        : clsx(classes.menuItemColor, classes.nested)
+                    }
+                  >
+                    <ListItemText primary="Business Profile" />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={Link}
+                    to="/admin/user/barista"
+                    className={
+                      location.pathname === "/admin/user/barista"
+                        ? clsx(classes.menuActiveItemColor, classes.nested)
+                        : clsx(classes.menuItemColor, classes.nested)
+                    }
+                  >
+                    <ListItemText primary="Barista User" />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={Link}
+                    to="/admin/payment"
+                    className={
+                      location.pathname === "/admin/payment"
+                        ? clsx(classes.menuActiveItemColor, classes.nested)
+                        : clsx(classes.menuItemColor, classes.nested)
+                    }
+                  >
+                    <ListItemText primary="Payment Gateway" />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={Link}
+                    to="/admin/subscription"
+                    className={
+                      location.pathname === "/admin/subscription"
+                        ? clsx(classes.menuActiveItemColor, classes.nested)
+                        : clsx(classes.menuItemColor, classes.nested)
+                    }
+                  >
+                    <ListItemText primary="Subscription" />
+                  </ListItem>
+                </List>
+              </Collapse>
 
               <ListItem
                 button
@@ -326,8 +398,8 @@ function AppBarNav({
 
               <ListItem
                 button
-                onClick={onPrintClick}
-                className={getPrintMenuClassName()}
+                onClick={onGoodsClick}
+                className={getGoodsMenuClassName()}
                 classes={{
                   gutters: classes.printMenuGutter,
                 }}
@@ -339,7 +411,7 @@ function AppBarNav({
                 {goodsMenuOpen ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
 
-              <Collapse in={printMenuOpen} timeout="auto" unmountOnExit>
+              <Collapse in={goodsMenuOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                   <ListItem
                     button

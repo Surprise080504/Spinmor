@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    // margin: theme.spacing(3, 0, 2),
   },
   loginInstead: {
     padding: theme.spacing(2),
@@ -515,7 +515,7 @@ function RegisterPage({ registerStatus, registerAction }) {
             </Menu>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <FormControlLabel
               control={<Checkbox name="acceptTerms" required color="primary" />}
               label={
@@ -532,28 +532,25 @@ function RegisterPage({ registerStatus, registerAction }) {
               }
             />
           </Grid>
-        </Grid>
+          <Grid item xs={12} sm={6}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              disabled={submitDisabled || registerStatus === status.loading}
+              startIcon={
+                registerStatus === status.loading && (
+                  <CircularProgress size="0.8125rem" color="primary" />
+                )
+              }
+            >
+              Sign Up
+            </Button>
+          </Grid>
 
-        <Grid item xs={12} sm={6}>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            disabled={submitDisabled || registerStatus === status.loading}
-            startIcon={
-              registerStatus === status.loading && (
-                <CircularProgress size="0.8125rem" color="primary" />
-              )
-            }
-          >
-            Sign Up
-          </Button>
-        </Grid>
-
-        <Grid container justify="flex-end">
-          <Grid item className={classes.loginInstead}>
+          <Grid item xs={12} sm={6}>
             <Link variant="body2" component={RouterLink} to="/login">
               Already have an account? Sign in
             </Link>

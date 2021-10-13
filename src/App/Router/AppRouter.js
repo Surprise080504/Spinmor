@@ -211,11 +211,11 @@ const AppRouter = ({
           <Home />
         </PrivateRoute>
 
-        <PrivateRoute exact path="/profile/user">
+        <PrivateRoute exact path="/admin/profile/user">
           <UserProfile />
         </PrivateRoute>
 
-        <PrivateRoute exact path="/profile/business">
+        <PrivateRoute exact path="/admin/profile/business">
           <BusinessProfile />
         </PrivateRoute>
 

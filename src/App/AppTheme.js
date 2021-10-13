@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     minHeight: "100vh",
     display: "flex",
+    backgroundColor: "#f8f8f8"
     // boxSizing: "border-box",
   },
   mainPaper: {

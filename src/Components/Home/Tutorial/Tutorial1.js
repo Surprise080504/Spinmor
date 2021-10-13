@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
@@ -64,8 +66,8 @@ function Tutorial1({ firstName, selectedLocation, setSelectedLocation }) {
         <br />
 
         <Typography variant="h6">
-          Let out{" "}
-          <span className={classes.smartStyle}>Smart Homepage Guide</span>{" "}
+          Let our{" "}
+          <span className={classes.smartStyle}>Smart Guide</span>{" "}
           introduce you to Spinmor.
         </Typography>
         <br />
@@ -130,6 +132,19 @@ function Tutorial1({ firstName, selectedLocation, setSelectedLocation }) {
         <Typography variant="h6" component="p">
           Alternatively, use the menu option "Locations" to view existing
           locations, and to create new location.
+        </Typography>
+      </Grid>
+
+      <Grid item>
+        <br />
+
+        <Typography variant="h6" component="p">
+          <Checkbox
+            color="primary"
+            inputProps={{ 'aria-label': 'primary checkbox' }}
+            style={{ marginBottom: 3 }}
+          />
+          Don't show <span className={classes.smartStyle}>Smart Guide</span>{" "} any more
         </Typography>
       </Grid>
 

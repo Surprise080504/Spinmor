@@ -21,15 +21,32 @@ import EmailIcon from "@material-ui/icons/Email";
 
 import { tokenAction } from "../Redux/AppReducer/App.act";
 import { status } from "../api/api";
-import spinmorLogo from "../Assets/images/logo.jpeg";
+import spinmorLogo from "../Assets/images/logo-new.jpg";
 import welcomeImage from "../Assets/images/welcomeImage.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minHeight: "100vh",
-    minWidth: "100%",
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
+    // minHeight: "100vh",
+    // minWidth: "100%",
+    // paddingTop: theme.spacing(2),
+    // paddingBottom: theme.spacing(2),
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100vw",
+    height: "100vh"
+  },
+  loginCard: {
+    padding: "20px",
+    backgroundColor: "#ffffff",
+    borderRadius: "20px",
+    boxShadow: " 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+
   },
   textField: {
     minWidth: 300,
@@ -46,9 +63,10 @@ const useStyles = makeStyles((theme) => ({
   },
 
   logoContainer: {
-    position: "absolute",
-    top: 24,
-    left: 24,
+    marginBottom: "50px"
+    // position: "absolute",
+    // top: 24,
+    // left: 24,
   },
   descriptionContainer: {
     display: "flex",
@@ -140,44 +158,32 @@ function Login({ isTokenCallLoading, tokenCallError, tokenAction }) {
   };
 
   return (
-    <Grid
-      container
-      justify="space-evenly"
-      alignItems="center"
-      alignContent="center"
-      className={classes.root}
-      direction="column"
-    >
-      <div className={classes.logoContainer}>
-        <a href="https://www.spinmor.com/" target="_blank" rel="noreferrer">
-          <img src={spinmorLogo} alt="logo" height={96} />
-        </a>
-      </div>
+    <div className={classes.root}>
+      <div className={classes.loginCard}>
+        <div className={classes.logoContainer}>
+          <a href="https://www.spinmor.com/" target="_blank" rel="noreferrer">
+            <img src={spinmorLogo} alt="logo" height={96} />
+          </a>
+        </div>
 
-      {/*<Grid item>
-        <Typography variant="h3" component="h1" align="center">
-          Please login to continue
-        </Typography>
-      </Grid>*/}
+        {verificationLevel === "notshow" && (
+          <Grid container item xs={12} sm={12} md={8} lg={6} xl={6}>
+            <div className={classes.descriptionContainer}>
+              <Typography
+                variant="h6"
+                component="p"
+                className={classes.justifyText}
+              >
+                <span>Welcome to Spinmor Operator Web Platform</span>
+                <br />
+                <br />
 
-      {verificationLevel === "not verified" && (
-        <Grid container item xs={12} sm={12} md={8} lg={6} xl={6}>
-          <div className={classes.descriptionContainer}>
-            <Typography
-              variant="h6"
-              component="p"
-              className={classes.justifyText}
-            >
-              <span>Welcome to Spinmor Operator Web Platform</span>
-              <br />
-              <br />
-
-              <span>
-                “Sandbox” is safe environment where you can learn, test, and
-                create locations and items, without creating or committing to
-                any financial transaction or affecting business data.
-              </span>
-              {/*<span>
+                <span>
+                  “Sandbox” is safe environment where you can learn, test, and
+                  create locations and items, without creating or committing to
+                  any financial transaction or affecting business data.
+                </span>
+                {/*<span>
               Welcome to Spinmor Opertor's web platform, where business owners
               and sellers set up their business.
             </span>
@@ -196,141 +202,148 @@ function Login({ isTokenCallLoading, tokenCallError, tokenAction }) {
               Step by step we guide you to create items, generate and print QR
               codes.
             </span>*/}
-            </Typography>
-            <img
-              src={welcomeImage}
-              alt="sandbox"
-              height={160}
-              className={classes.sandboxImage}
-            />
-          </div>
+              </Typography>
+              <img
+                src={welcomeImage}
+                alt="sandbox"
+                height={160}
+                className={classes.sandboxImage}
+              />
+            </div>
 
-          <Grid item>
-            <Typography variant="h6">
-              <br />
-              <span>
-                <span className={classes.smartStyle}>Smart Homepage Guide</span>{" "}
-                is our step by step process to introduce you to how Spinmor
-                business operates and provide you tool to safely explore Spinmor
-                functionality.
-              </span>
+            <Grid item>
+              <Typography variant="h6">
+                <br />
+                <span>
+                  <span className={classes.smartStyle}>Smart Homepage Guide</span>{" "}
+                  is our step by step process to introduce you to how Spinmor
+                  business operates and provide you tool to safely explore Spinmor
+                  functionality.
+                </span>
 
-              <br />
-              <br />
-              <span>
-                You will experience Spinmor as customer, using Spinmor App to
-                scan items, add to basket, go to checkpoint, and "virtually"
-                pay.
-              </span>
+                <br />
+                <br />
+                <span>
+                  You will experience Spinmor as customer, using Spinmor App to
+                  scan items, add to basket, go to checkpoint, and "virtually"
+                  pay.
+                </span>
 
-              <br />
-              <br />
-              <Link component={RouterLink} to="/register">
-                Click here to Register
-              </Link>
-            </Typography>
+                <br />
+                <br />
+                <Link component={RouterLink} to="/register">
+                  Click here to Register
+                </Link>
+              </Typography>
+            </Grid>
           </Grid>
-        </Grid>
-      )}
-
-      <Grid item>
-        {isTokenCallLoading && (
-          <CircularProgress style={{ alignSelf: "center" }} size="3rem" />
         )}
 
-        {tokenCallError && (
-          <Typography>An error while logging in: {tokenCallError}</Typography>
-        )}
-
-        {localStorage.getItem("@initializationStatus") ===
-          status.error_exchange && (
-            <Typography>
-              An error while getting exchange rates, please try again
-            </Typography>
+        <Grid item>
+          {isTokenCallLoading && (
+            <CircularProgress style={{ alignSelf: "center" }} size="3rem" />
           )}
 
-        {localStorage.getItem("@initializationStatus") ===
-          status.error_login && (
-            <Typography>
-              An error while getting your info, please try again
-            </Typography>
+          {tokenCallError && (
+            <Typography>An error while logging in: {tokenCallError}</Typography>
           )}
-      </Grid>
 
-      <Grid
-        container
-        item
-        direction="column"
-        alignItems="center"
-        justify="space-between"
-        className={classes.inputContainer}
-      >
-        <Grid item className={classes.alreadyRegistered}>
-          <Typography>Already registered? Please login</Typography>
+          {localStorage.getItem("@initializationStatus") ===
+            status.error_exchange && (
+              <Typography>
+                An error while getting exchange rates, please try again
+              </Typography>
+            )}
+
+          {localStorage.getItem("@initializationStatus") ===
+            status.error_login && (
+              <Typography>
+                An error while getting your info, please try again
+              </Typography>
+            )}
         </Grid>
 
-        <form
-          autoComplete="on"
-          onSubmit={handleLogin}
-          className={classes.formElement}
+        <Grid
+          container
+          item
+          direction="column"
+          alignItems="center"
+          justify="space-between"
+          className={classes.inputContainer}
         >
-          <Grid item>
-            <TextField
-              value={email}
-              label="email"
-              // type="email"
-              onChange={(e) => setEmail(e.target.value)}
-              variant="outlined"
-              className={classes.textField}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <EmailIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
+          <Grid item className={classes.alreadyRegistered}>
+            <Typography>Already registered? Please login</Typography>
           </Grid>
 
-          <Grid item>
-            <TextField
-              value={password}
-              label="password"
-              type={showPassword ? "text" : "password"}
-              autoComplete="on"
-              onChange={(e) => setPassword(e.target.value)}
-              variant="outlined"
-              className={classes.textField}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowPassword((prevVal) => !prevVal)}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
+          <form
+            autoComplete="on"
+            onSubmit={handleLogin}
+            className={classes.formElement}
+          >
+            <Grid item>
+              <TextField
+                value={email}
+                label="email"
+                // type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                variant="outlined"
+                className={classes.textField}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <EmailIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
 
-          <Grid item style={{ alignSelf: "flex-end" }}>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              disabled={isTokenCallLoading}
-            >
-              login
-            </Button>
-          </Grid>
-        </form>
+            <Grid item>
+              <TextField
+                value={password}
+                label="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="on"
+                onChange={(e) => setPassword(e.target.value)}
+                variant="outlined"
+                className={classes.textField}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword((prevVal) => !prevVal)}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
 
-        {(verificationLevel === "last week" ||
-          verificationLevel === "not verified") && (
+            <Grid item style={{ justifyContent: "space-between", display: "flex" }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                component={RouterLink}
+                to="/register"
+              >
+                register
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                disabled={isTokenCallLoading}
+              >
+                login
+              </Button>
+            </Grid>
+          </form>
+
+          {(verificationLevel === "not show") && (
             <Grid
               container
               item
@@ -348,21 +361,11 @@ function Login({ isTokenCallLoading, tokenCallError, tokenAction }) {
               forgot password
             </Button>
           </Grid>*/}
-
-              <Grid item>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  component={RouterLink}
-                  to="/register"
-                >
-                  register
-                </Button>
-              </Grid>
             </Grid>
           )}
-      </Grid>
-    </Grid>
+        </Grid>
+      </div>
+    </div>
   );
 }
 
